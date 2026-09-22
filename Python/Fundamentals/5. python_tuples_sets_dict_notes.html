@@ -1,0 +1,1480 @@
+<title>Tuples, Sets &amp; Dictionary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg:#F4F6F5; --surface:#FFFFFF; --surface-2:#ECF1EE;
+    --ink:#16241F; --ink-soft:#4B5D57; --border:#D7E0DB;
+    --accent:#0E7C66; --accent-soft:#DCEFE8;
+    --accent-2:#C67F0E; --accent-2-soft:#FBEBD2;
+    --danger:#B8453A; --danger-soft:#F8E3DF;
+    --interview:#5551C9; --interview-soft:#E7E7FA;
+    --code-bg:#12201B; --code-ink:#BEF6DC; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#6E8079; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(20,40,35,.07), 0 10px 28px rgba(20,40,35,.08);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+      --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+      --accent:#3FCFA3; --accent-soft:#153228;
+      --accent-2:#F0B84D; --accent-2-soft:#33291A;
+      --danger:#E28074; --danger-soft:#3A211E;
+      --interview:#ABABF7; --interview-soft:#231F3D;
+      --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+    --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+    --accent:#3FCFA3; --accent-soft:#153228;
+    --accent-2:#F0B84D; --accent-2-soft:#33291A;
+    --danger:#E28074; --danger-soft:#3A211E;
+    --interview:#ABABF7; --interview-soft:#231F3D;
+    --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Work Sans', system-ui, sans-serif;
+    padding-inline:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Fraunces', Georgia, serif; text-wrap:balance; margin:0; }
+  a{ color:var(--accent); }
+  .wrap{ max-width:760px; margin:0 auto; padding-block:28px 80px; }
+
+  .hero{
+    background:linear-gradient(155deg, var(--surface) 0%, var(--surface-2) 100%);
+    border:1px solid var(--border); border-radius:20px;
+    padding:28px 26px; box-shadow:var(--shadow); margin-bottom:18px;
+    position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+    background:var(--accent-soft); border-radius:50%; opacity:.7; z-index:0;
+  }
+  .hero-inner{ position:relative; z-index:1; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-soft);
+    padding:5px 11px; border-radius:100px; margin-bottom:12px;
+  }
+  .hero h1{ font-size:clamp(26px,6vw,38px); font-weight:700; line-height:1.08; }
+  .hero p.sub{ margin:10px 0 0; color:var(--ink-soft); font-size:15.5px; max-width:52ch; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .meta-chip{
+    font-size:12.5px; font-weight:600; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:5px 10px; font-family:'JetBrains Mono',monospace;
+  }
+
+  .toc{
+    display:flex; gap:8px; overflow-x:auto; padding:4px 2px 14px;
+    margin-bottom:6px; scrollbar-width:thin;
+  }
+  .toc a{
+    flex:0 0 auto; text-decoration:none; font-size:13px; font-weight:600;
+    color:var(--ink-soft); background:var(--surface); border:1px solid var(--border);
+    padding:7px 13px; border-radius:100px; white-space:nowrap;
+  }
+  .toc a span{ color:var(--accent); font-family:'JetBrains Mono',monospace; margin-right:5px; }
+  .toc-group{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); flex:0 0 auto; display:flex; align-items:center; padding:0 4px; }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 22px; }
+  .tag{
+    font-size:11.5px; font-weight:700; letter-spacing:.02em;
+    padding:4px 10px; border-radius:7px; display:inline-flex; align-items:center; gap:5px;
+  }
+  .tag.remember{ background:var(--accent-2-soft); color:var(--accent-2); }
+  .tag.gotcha{ background:var(--danger-soft); color:var(--danger); }
+  .tag.interview{ background:var(--interview-soft); color:var(--interview); }
+  .tag.concept{ background:var(--accent-soft); color:var(--accent); }
+  .tag.story{ background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--border); }
+
+  .part-heading{
+    font-family:'Fraunces',serif; font-weight:600; font-size:14px; text-transform:uppercase;
+    letter-spacing:.08em; color:var(--ink-soft); margin:26px 2px 10px; display:flex; align-items:center; gap:10px;
+  }
+  .part-heading::after{ content:""; flex:1; height:1px; background:var(--border); }
+
+  details.section{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    margin-bottom:14px; box-shadow:var(--shadow); overflow:hidden;
+  }
+  details.section > summary{
+    list-style:none; cursor:pointer; padding:18px 20px;
+    display:flex; align-items:center; gap:13px; user-select:none;
+  }
+  details.section > summary::-webkit-details-marker{ display:none; }
+  .s-num{
+    flex:0 0 auto; width:34px; height:34px; border-radius:10px;
+    background:var(--accent-soft); color:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px;
+  }
+  .s-title{ font-family:'Fraunces',serif; font-weight:600; font-size:18px; flex:1 1 auto; }
+  .chev{ color:var(--ink-soft); transition:transform .2s ease; flex:0 0 auto; }
+  details[open] > summary .chev{ transform:rotate(90deg); }
+  .s-body{ padding:0 20px 22px; }
+  .s-body > *:first-child{ margin-top:0; }
+  .s-body p{ line-height:1.65; color:var(--ink); font-size:15px; margin:0 0 12px; }
+  .s-body h4{ font-family:'Work Sans',sans-serif; font-size:14.5px; font-weight:700; margin:18px 0 8px; color:var(--ink); }
+  .s-body ul, .s-body ol{ margin:0 0 12px; padding-left:22px; line-height:1.65; font-size:15px; }
+  .s-body li{ margin-bottom:5px; }
+  .quote{
+    font-family:'Fraunces',serif; font-style:italic; font-size:15.5px;
+    color:var(--ink-soft); border-left:3px solid var(--accent);
+    padding:2px 0 2px 14px; margin:12px 0;
+  }
+
+  .callout{
+    border-radius:12px; padding:13px 15px; margin:14px 0; font-size:14.5px; line-height:1.6;
+    border:1px solid transparent;
+  }
+  .callout .cal-head{ font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; display:flex; align-items:center; gap:6px; }
+  .callout.remember{ background:var(--accent-2-soft); color:var(--ink); border-color:color-mix(in srgb, var(--accent-2) 30%, transparent); }
+  .callout.remember .cal-head{ color:var(--accent-2); }
+  .callout.gotcha{ background:var(--danger-soft); color:var(--ink); border-color:color-mix(in srgb, var(--danger) 30%, transparent); }
+  .callout.gotcha .cal-head{ color:var(--danger); }
+  .callout.interview{ background:var(--interview-soft); color:var(--ink); border-color:color-mix(in srgb, var(--interview) 30%, transparent); }
+  .callout.interview .cal-head{ color:var(--interview); }
+  .callout.story{ background:var(--surface-2); color:var(--ink); border-color:var(--border); }
+  .callout.story .cal-head{ color:var(--ink-soft); }
+
+  .code-wrap{ position:relative; margin:12px 0; border-radius:12px; overflow:hidden; box-shadow:var(--shadow); }
+  pre.code{
+    background:var(--code-bg); color:var(--code-ink); margin:0; padding:14px 44px 14px 16px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6;
+    overflow-x:auto; white-space:pre;
+  }
+  pre.code .kw{ color:var(--code-kw); }
+  pre.code .str{ color:var(--code-str); }
+  pre.code .cm{ color:var(--code-cm); }
+  pre.code .num{ color:var(--code-num); }
+  .copy-btn{
+    position:absolute; top:8px; right:8px; background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18); color:#cfe9df; border-radius:7px;
+    font-family:'Work Sans',sans-serif; font-size:11px; font-weight:600;
+    padding:5px 9px; cursor:pointer;
+  }
+  .copy-btn:hover{ background:rgba(255,255,255,.16); }
+  .out{
+    background:var(--surface-2); border:1px dashed var(--border); border-radius:10px;
+    padding:9px 13px; font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    color:var(--ink-soft); margin:-4px 0 12px;
+  }
+  .out b{ color:var(--ink); font-weight:600; }
+
+  .tbl-wrap{ overflow-x:auto; margin:14px 0; border-radius:12px; border:1px solid var(--border); }
+  table{ border-collapse:collapse; width:100%; font-size:13.5px; min-width:460px; }
+  th{
+    background:var(--surface-2); text-align:left; padding:9px 12px; font-weight:700;
+    color:var(--ink); border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  td{ padding:9px 12px; border-bottom:1px solid var(--border); color:var(--ink); vertical-align:top; }
+  tr:last-child td{ border-bottom:none; }
+  td code, li code, p code{
+    font-family:'JetBrains Mono',monospace; background:var(--surface-2); padding:1px 6px;
+    border-radius:5px; font-size:.92em; color:var(--accent);
+  }
+
+  .cheat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin:14px 0; }
+  .cheat-card{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:13px 14px;
+  }
+  .cheat-card h5{ margin:0 0 6px; font-size:13px; font-family:'JetBrains Mono',monospace; color:var(--accent); font-weight:700; }
+  .cheat-card p{ margin:0; font-size:13px; color:var(--ink-soft); line-height:1.55; }
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:12.5px; margin-top:26px; }
+
+  @media (max-width:480px){
+    .s-title{ font-size:16.5px; }
+    .hero h1{ font-size:24px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">● CampusX &nbsp;·&nbsp; Data Science Mentorship &nbsp;·&nbsp; Session 5</span>
+      <h1>Tuples, Sets &amp; Dictionary</h1>
+      <p class="sub">The last three core data types — the immutable sibling of lists, the unordered "no-duplicates" container that powers real set-theory math, and the key-value workhorse behind JSON, APIs and (soon) Pandas.</p>
+      <div class="meta-row">
+        <span class="meta-chip">21 sections</span>
+        <span class="meta-chip">"Python Fundamentals module now complete"</span>
+        <span class="meta-chip">source: transcript + class notebook</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="tag remember">★ Remember</span>
+    <span class="tag gotcha">⚠ Gotcha</span>
+    <span class="tag interview">◆ Interview</span>
+    <span class="tag concept">● Core idea</span>
+    <span class="tag story">✎ Analogy</span>
+  </div>
+
+  <nav class="toc" aria-label="Table of contents">
+    <span class="toc-group">Tuples</span>
+    <a href="#s1"><span>01</span>What Is a Tuple</a>
+    <a href="#s2"><span>02</span>Creating</a>
+    <a href="#s3"><span>03</span>Accessing</a>
+    <a href="#s4"><span>04</span>Edit/Add/Delete</a>
+    <a href="#s5"><span>05</span>Operations &amp; Functions</a>
+    <a href="#s6"><span>06</span>Tuple vs List</a>
+    <a href="#s7"><span>◆</span>Why Use a Tuple</a>
+    <a href="#s8"><span>08</span>Unpacking &amp; zip()</a>
+    <span class="toc-group">Sets</span>
+    <a href="#s9"><span>09</span>What Is a Set</a>
+    <a href="#s10"><span>10</span>Creating</a>
+    <a href="#s11"><span>11</span>Access/Edit/Add/Delete</a>
+    <a href="#s12"><span>12</span>Set Operations</a>
+    <a href="#s13"><span>13</span>Set Functions</a>
+    <a href="#s14"><span>14</span>Frozenset</a>
+    <a href="#s15"><span>15</span>Set Comprehension</a>
+    <span class="toc-group">Dictionary</span>
+    <a href="#s16"><span>16</span>What Is a Dictionary</a>
+    <a href="#s17"><span>17</span>Creating</a>
+    <a href="#s18"><span>18</span>Access/Add/Remove/Edit</a>
+    <a href="#s19"><span>19</span>Operations &amp; Functions</a>
+    <a href="#s20"><span>20</span>Dict Comprehension</a>
+    <a href="#s21"><span>★</span>Cheat Sheet</a>
+  </nav>
+
+  <div class="part-heading">Part A — Tuples</div>
+
+  <!-- 1 -->
+  <details class="section" id="s1" open>
+    <summary><span class="s-num">01</span><span class="s-title">What Is a Tuple?</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="quote">"Tuple and list are siblings — very similar. There is only one big difference: you cannot change the elements of a tuple. In simple words, a tuple is immutable, just like strings — and a list is mutable."</div>
+      <p><span class="tag concept">Core idea</span> Think of a tuple as an <b>immutable list</b>. Everything you already know about lists (indexing, slicing, iteration, nesting) carries over — the one thing that changes is that once a tuple is created, it can never be edited again.</p>
+      <h4>3 characteristics</h4>
+      <ul>
+        <li><b>Ordered</b> — position matters, same as a list.</li>
+        <li><b>Unchangeable</b> — cannot be edited once created.</li>
+        <li><b>Allows duplicates</b> — repeated values are fine.</li>
+      </ul>
+      <p><b>Plan for this topic</b> (same shape as every data type so far): Creating → Accessing → Editing → Adding → Deleting → Operations → Functions.</p>
+    </div>
+  </details>
+
+  <!-- 2 -->
+  <details class="section" id="s2" open>
+    <summary><span class="s-num">02</span><span class="s-title">Creating Tuples</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# empty
+t1 = ()
+print(t1)
+# create a tuple with a single item
+t2 = ('hello',)
+print(t2)
+print(type(t2))
+# homo
+t3 = (1,2,3,4)
+print(t3)
+# hetro
+t4 = (1,2.5,True,[1,2,3])
+print(t4)
+# tuple
+t5 = (1,2,3,(4,5))
+print(t5)
+# using type conversion
+t6 = tuple('hello')
+print(t6)">Copy</button>
+        <pre class="code"><span class="cm"># empty</span>
+t1 = ()
+<span class="kw">print</span>(t1)
+<span class="cm"># create a tuple with a single item</span>
+t2 = (<span class="str">'hello'</span>,)
+<span class="kw">print</span>(t2)
+<span class="kw">print</span>(<span class="kw">type</span>(t2))
+<span class="cm"># homo</span>
+t3 = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>)
+<span class="kw">print</span>(t3)
+<span class="cm"># hetro</span>
+t4 = (<span class="num">1</span>,<span class="num">2.5</span>,<span class="kw">True</span>,[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])
+<span class="kw">print</span>(t4)
+<span class="cm"># tuple</span>
+t5 = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,(<span class="num">4</span>,<span class="num">5</span>))
+<span class="kw">print</span>(t5)
+<span class="cm"># using type conversion</span>
+t6 = <span class="kw">tuple</span>(<span class="str">'hello'</span>)
+<span class="kw">print</span>(t6)</pre>
+      </div>
+      <div class="out">()<br/>('hello',)<br/>&lt;class 'tuple'&gt;<br/>(1, 2, 3, 4)<br/>(1, 2.5, True, [1, 2, 3])<br/>(1, 2, 3, (4, 5))<br/>('h', 'e', 'l', 'l', 'o')</div>
+      <p>Empty tuple uses round brackets <code>()</code> — the first visible tuple-vs-list difference (list used square brackets). A tuple can be homogeneous, heterogeneous, or even nested (a tuple inside a tuple). <code>tuple('hello')</code> converts any iterable into a tuple, splitting a string into its characters.</p>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ The single-item tuple trap</div>
+        Writing <code>t2 = (2)</code> does <b>NOT</b> make a tuple — it just makes the integer <code>2</code> (parentheses here are read as grouping, not tuple syntax). Same for <code>("hello")</code> — that's just a string. You must add a <b>trailing comma</b>: <code>t2 = (2,)</code> or <code>t2 = ('hello',)</code>. Proven above by checking <code>type(t2)</code> → <code>&lt;class 'tuple'&gt;</code> only once the comma is there. This is one of the most common beginner mistakes with tuples.
+      </div>
+    </div>
+  </details>
+
+  <!-- 3 -->
+  <details class="section" id="s3" open>
+    <summary><span class="s-num">03</span><span class="s-title">Accessing Items — Indexing &amp; Slicing</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p><span class="tag concept">Core idea</span> Same two tools as strings and lists — this is the <b>third</b> time learning indexing/slicing, so nothing new mechanically: positive indexing left-to-right from 0, negative indexing right-to-left from -1, and slicing with <code>start:stop:step</code>.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(t3)
+print(t3[0])
+print(t3[-1])">Copy</button>
+        <pre class="code"><span class="kw">print</span>(t3)
+<span class="kw">print</span>(t3[<span class="num">0</span>])
+<span class="kw">print</span>(t3[-<span class="num">1</span>])</pre>
+      </div>
+      <div class="out">(1, 2, 3, 4)<br/>1<br/>4</div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="t5[-1][0]">Copy</button>
+        <pre class="code">t5[-<span class="num">1</span>][<span class="num">0</span>]</pre>
+      </div>
+      <div class="out">4</div>
+      <p>Nested (2D) tuple access works exactly like 2D lists — chain the index brackets. <code>t5 = (1, 2, 3, (4, 5))</code>, so <code>t5[-1]</code> grabs the inner tuple <code>(4, 5)</code>, then <code>[0]</code> grabs <code>4</code> from it.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="t = (1,2,3,4,5)
+
+t[-1:-4:-1]">Copy</button>
+        <pre class="code">t = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>)
+
+t[-<span class="num">1</span>:-<span class="num">4</span>:-<span class="num">1</span>]</pre>
+      </div>
+      <div class="out">(5, 4, 3)</div>
+      <div class="callout remember">
+        <div class="cal-head">★ The instructor's negative-step "hack"</div>
+        "Whenever you take a negative step, always remember the left-side number must be <b>greater</b>. It's exactly the opposite for a positive step — there the left-side number must be <b>smaller</b>." That's why <code>t[-1:-4:-1]</code> works (−1 is "greater" moving right-to-left) — get the direction backwards and you'll silently get an empty result instead of an error.
+      </div>
+    </div>
+  </details>
+
+  <!-- 4 -->
+  <details class="section" id="s4" open>
+    <summary><span class="s-num">04</span><span class="s-title">Editing, Adding &amp; Deleting</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <h4>Editing — not possible</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(t3)
+t3[0] = 100
+# immutable just like strings">Copy</button>
+        <pre class="code"><span class="kw">print</span>(t3)
+t3[<span class="num">0</span>] = <span class="num">100</span>
+<span class="cm"># immutable just like strings</span></pre>
+      </div>
+      <div class="out">(1, 2, 3, 4)<br/><b>TypeError</b> — 'tuple' object does not support item assignment</div>
+      <h4>Adding — not possible</h4>
+      <p>There is <b>no</b> <code>.append()</code>, <code>.extend()</code>, or <code>.insert()</code> for tuples — the whole family of "add" methods lists have simply doesn't exist here, for the same immutability reason.</p>
+      <h4>Deleting — only the whole tuple, never a piece</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(t3)
+del t3
+print(t3)">Copy</button>
+        <pre class="code"><span class="kw">print</span>(t3)
+<span class="kw">del</span> t3
+<span class="kw">print</span>(t3)</pre>
+      </div>
+      <div class="out">(1, 2, 3, 4)<br/><b>NameError</b> — name 't3' is not defined</div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(t5)
+del t5[-1]">Copy</button>
+        <pre class="code"><span class="kw">print</span>(t5)
+<span class="kw">del</span> t5[-<span class="num">1</span>]</pre>
+      </div>
+      <div class="out">(1, 2, 3, (4, 5))<br/><b>TypeError</b> — 'tuple' object doesn't support item deletion</div>
+      <div class="callout remember">
+        <div class="cal-head">★ One-line summary</div>
+        Editing doesn't work. Adding doesn't work. Deleting works only for the <b>entire</b> tuple (<code>del t3</code> removes the whole variable) — never a single item inside it.
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Deferred to the interview-questions class</div>
+        "This week's interview questions session will fully cover what mutability means, what it means at the <b>memory level</b> to be immutable, and why both mutable and immutable types even exist." Keep an eye out for that follow-up.
+      </div>
+    </div>
+  </details>
+
+  <!-- 5 -->
+  <details class="section" id="s5" open>
+    <summary><span class="s-num">05</span><span class="s-title">Operations &amp; Functions on Tuples</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <h4>Operations — same 4 as lists</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# + and *
+t1 = (1,2,3,4)
+t2 = (5,6,7,8)
+
+print(t1 + t2)
+
+print(t1*3)
+# membership
+1 in t1
+# iteration
+for i in t1:
+  print(i)">Copy</button>
+        <pre class="code"><span class="cm"># + and *</span>
+t1 = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>)
+t2 = (<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>)
+
+<span class="kw">print</span>(t1 + t2)
+
+<span class="kw">print</span>(t1*<span class="num">3</span>)
+<span class="cm"># membership</span>
+<span class="num">1</span> <span class="kw">in</span> t1
+<span class="cm"># iteration</span>
+<span class="kw">for</span> i <span class="kw">in</span> t1:
+  <span class="kw">print</span>(i)</pre>
+      </div>
+      <div class="out">(1, 2, 3, 4, 5, 6, 7, 8)<br/>(1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4)<br/>1<br/>2<br/>3<br/>4</div>
+      <p><code>+</code> concatenates two tuples, <code>*</code> repeats one, <code>in</code>/<code>not in</code> tests membership, and <code>for</code> iterates item by item — identical mechanics to lists.</p>
+      <h4>Functions — the "belt" functions plus 2 tuple-only ones</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# len/sum/min/max/sorted
+t = (1,2,3,4)
+len(t)
+
+sum(t)
+
+min(t)
+
+max(t)
+
+sorted(t,reverse=True)">Copy</button>
+        <pre class="code"><span class="cm"># len/sum/min/max/sorted</span>
+t = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>)
+<span class="kw">len</span>(t)
+
+<span class="kw">sum</span>(t)
+
+<span class="kw">min</span>(t)
+
+<span class="kw">max</span>(t)
+
+<span class="kw">sorted</span>(t,reverse=<span class="kw">True</span>)</pre>
+      </div>
+      <div class="out">[4, 3, 2, 1]</div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# count
+t = (1,2,3,4,5)
+t.count(50)
+# index
+t.index(50)">Copy</button>
+        <pre class="code"><span class="cm"># count</span>
+t = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>)
+t.count(<span class="num">50</span>)
+<span class="cm"># index</span>
+t.index(<span class="num">50</span>)</pre>
+      </div>
+      <div class="out">t.count(50) → 0<br/>t.index(50) → <b>ValueError</b> — tuple.index(x): x not in tuple</div>
+      <p><code>count(x)</code> returns how many times <code>x</code> appears (0 if absent, no error). <code>index(x)</code> returns the position of <code>x</code>, but <b>raises an error</b> if it isn't found — unlike <code>count</code>.</p>
+      <div class="callout remember">
+        <div class="cal-head">★ Honest recap from the instructor</div>
+        "You haven't really learned anything new here — everything you just saw was list stuff." Tuples only add two exclusive functions on top: <code>count()</code> and <code>index()</code>.
+      </div>
+    </div>
+  </details>
+
+  <!-- 6 -->
+  <details class="section" id="s6" open>
+    <summary><span class="s-num">06</span><span class="s-title">Tuple vs List — Full Comparison</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>The instructor pauses here specifically to make this comparison "sit firmly in your mind."</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Angle</th><th>List</th><th>Tuple</th></tr>
+          <tr><td>Syntax</td><td>Square brackets <code>[]</code></td><td>Round brackets <code>()</code></td></tr>
+          <tr><td>Mutability</td><td>Can edit / add / delete anytime</td><td>Cannot change after creation</td></tr>
+          <tr><td>Speed</td><td>Slower</td><td><b>Faster</b></td></tr>
+          <tr><td>Memory</td><td>Uses more</td><td><b>Uses less</b></td></tr>
+          <tr><td>Built-in functions</td><td>Many (from previous session)</td><td>Only 2 extra (count, index)</td></tr>
+          <tr><td>Debugging safety</td><td>Prone to accidental-reference bugs</td><td>Safer — nothing can silently change</td></tr>
+        </table>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Rule of thumb for speed &amp; memory</div>
+        "Generally, immutable data types are faster and take less memory than mutable data types." Whenever a question compares two data types on speed or memory, decide based on which one is mutable vs immutable — <b>immutable usually wins on both</b>. The exact "why" (at the memory level) is deferred to the dedicated interview-questions session.
+      </div>
+      <h4>Proof — speed test</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="import time
+
+L = list(range(100000000))
+T = tuple(range(100000000))
+
+start = time.time()
+for i in L:
+  i*5
+print('List time',time.time()-start)
+
+start = time.time()
+for i in T:
+  i*5
+print('Tuple time',time.time()-start)">Copy</button>
+        <pre class="code"><span class="kw">import</span> time
+
+L = <span class="kw">list</span>(range(<span class="num">100000000</span>))
+T = <span class="kw">tuple</span>(range(<span class="num">100000000</span>))
+
+start = time.time()
+<span class="kw">for</span> i <span class="kw">in</span> L:
+  i*<span class="num">5</span>
+<span class="kw">print</span>(<span class="str">'List time'</span>,time.time()-start)
+
+start = time.time()
+<span class="kw">for</span> i <span class="kw">in</span> T:
+  i*<span class="num">5</span>
+<span class="kw">print</span>(<span class="str">'Tuple time'</span>,time.time()-start)</pre>
+      </div>
+      <div class="out">List time 9.853569507598877<br/>Tuple time 8.347511053085327</div>
+      <p>Tuple iteration finished faster. The instructor notes the gap looks small here only because the operation per item (<code>i*5</code>) is trivial — with heavier processing per item, the gap would widen.</p>
+      <h4>Proof — memory test</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="import sys
+
+L = list(range(1000))
+T = tuple(range(1000))
+
+print('List size',sys.getsizeof(L))
+print('Tuple size',sys.getsizeof(T))">Copy</button>
+        <pre class="code"><span class="kw">import</span> sys
+
+L = <span class="kw">list</span>(range(<span class="num">1000</span>))
+T = <span class="kw">tuple</span>(range(<span class="num">1000</span>))
+
+<span class="kw">print</span>(<span class="str">'List size'</span>,sys.getsizeof(L))
+<span class="kw">print</span>(<span class="str">'Tuple size'</span>,sys.getsizeof(T))</pre>
+      </div>
+      <div class="out">List size 9120<br/>Tuple size 8056</div>
+      <h4>Proof — debugging safety (accidental aliasing)</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a = [1,2,3]
+b = a
+
+a.append(4)
+print(a)
+print(b)">Copy</button>
+        <pre class="code">a = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]
+b = a
+
+a.append(<span class="num">4</span>)
+<span class="kw">print</span>(a)
+<span class="kw">print</span>(b)</pre>
+      </div>
+      <div class="out">[1, 2, 3, 4]<br/>[1, 2, 3, 4]</div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a = (1,2,3)
+b = a
+
+a = a + (4,)
+print(a)
+print(b)">Copy</button>
+        <pre class="code">a = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>)
+b = a
+
+a = a + (<span class="num">4</span>,)
+<span class="kw">print</span>(a)
+<span class="kw">print</span>(b)</pre>
+      </div>
+      <div class="out">(1, 2, 3, 4)<br/>(1, 2, 3)</div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Why this matters</div>
+        With the list, <code>b = a</code> makes <code>b</code> point at the <b>same</b> object — appending through <code>a</code> silently changes <code>b</code> too, a classic source of bugs. With the tuple, <code>a = a + (4,)</code> can't mutate the original — it builds a brand-new tuple and rebinds <code>a</code> to it, leaving <code>b</code> untouched. "Because nothing can change, there's less chance of mistakes — debugging is easier."
+      </div>
+    </div>
+  </details>
+
+  <!-- 7 -->
+  <details class="section" id="s7" open>
+    <summary><span class="s-num">◆</span><span class="s-title">Why Use a Tuple? — The Branch/CGPA Story</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="callout story">
+        <div class="cal-head">✎ The instructor's analogy for when to reach for a tuple</div>
+        Suppose you got placed at your own college as a web developer, building the college website. Your friend got an engineering branch he didn't want (say Electrical) but wants Computer Science — he was told "keep your CGPA above 8 in first year and you can switch branches." He tried hard, but hostel life got in the way: "everyone studies together only if everyone feels like it — if nobody feels like it, nobody studies." Despite the effort, he ends up with a CGPA of 6. Now he comes to <i>you</i>, the developer who built the results page, and asks you to just change his CGPA.<br/><br/>
+        Question posed to the class: <b>if the result data were stored in a list, could you change it? What if it were stored in a tuple?</b>
+      </div>
+      <ul>
+        <li>Stored in a <b>list</b> → yes, it <i>can</i> be edited — dangerous, since anyone with access could tamper with it.</li>
+        <li>Stored in a <b>tuple</b> → no, it <i>cannot</i> be edited — safe, tamper-proof by design.</li>
+      </ul>
+      <div class="callout remember">
+        <div class="cal-head">★ The actual rule to remember</div>
+        "Whenever you're building a <b>read-only</b> application — where you'll only read data, never change it — prefer tuples. Where you're building something the user will change a lot, like a to-do list, use a list." (Instructor's own caveat: "not a perfectly accurate example, but it should make the concept clear.")
+      </div>
+    </div>
+  </details>
+
+  <!-- 8 -->
+  <details class="section" id="s8" open>
+    <summary><span class="s-num">08</span><span class="s-title">Tuple Unpacking, Swapping &amp; zip()</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <h4>Basic unpacking</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a,b,c = (1,2,3)
+print(a,b,c)">Copy</button>
+        <pre class="code">a,b,c = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>)
+<span class="kw">print</span>(a,b,c)</pre>
+      </div>
+      <div class="out">1 2 3</div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a,b = (1,2,3)
+print(a,b)">Copy</button>
+        <pre class="code">a,b = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>)
+<span class="kw">print</span>(a,b)</pre>
+      </div>
+      <div class="out"><b>ValueError</b> — too many values to unpack (expected 2)</div>
+      <p>The number of variables on the left must match the number of items on the right — "both sides must match."</p>
+      <h4>The famous swap-without-a-temp-variable trick</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a = 1
+b = 2
+a,b = b,a
+
+print(a,b)">Copy</button>
+        <pre class="code">a = <span class="num">1</span>
+b = <span class="num">2</span>
+a,b = b,a
+
+<span class="kw">print</span>(a,b)</pre>
+      </div>
+      <div class="out">2 1</div>
+      <div class="callout remember">
+        <div class="cal-head">★ Why this is famous</div>
+        In most other languages, swapping two variables needs a third temporary variable. Python's tuple unpacking does it in one line — "a syntax that helps you in many places instead of writing three lines the long way."
+      </div>
+      <h4>Partial unpacking with the star (*) operator</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a,b,*others = (1,2,3,4)
+print(a,b)
+print(others)">Copy</button>
+        <pre class="code">a,b,*others = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>)
+<span class="kw">print</span>(a,b)
+<span class="kw">print</span>(others)</pre>
+      </div>
+      <div class="out">1 2<br/>[3, 4]</div>
+      <p><code>a</code> takes the first value, <code>b</code> the second, and <code>*others</code> scoops up everything left over into a <b>list</b>. This pattern will show up "knowingly or unknowingly" many more times through the course.</p>
+      <h4>zip() on tuples</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# zipping tuples
+a = (1,2,3,4)
+b = (5,6,7,8)
+
+tuple(zip(a,b))">Copy</button>
+        <pre class="code"><span class="cm"># zipping tuples</span>
+a = (<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>)
+b = (<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>)
+
+<span class="kw">tuple</span>(zip(a,b))</pre>
+      </div>
+      <div class="out">((1, 5), (2, 6), (3, 7), (4, 8))</div>
+      <div class="callout story">
+        <div class="cal-head">✎ zip() is a utility, not a standalone feature</div>
+        "It's like a screwdriver — it has no job of its own, but it's useful as a tool for some other task, like opening up a TV or laptop." <code>zip()</code> pairs items from two iterables position-by-position; it's genuinely useful whenever you need to combine two sequences, as seen again later in dictionary comprehension.
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Tuples, one-line summary</div>
+        "Tuple is the sibling of list, with one big difference: immutability. Every READ operation you know from lists works the same on tuples — every WRITE operation simply doesn't."
+      </div>
+    </div>
+  </details>
+
+  <div class="part-heading">Part B — Sets</div>
+
+  <!-- 9 -->
+  <details class="section" id="s9" open>
+    <summary><span class="s-num">09</span><span class="s-title">What Is a Set? — 4 Key Rules</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p><span class="tag concept">Core idea</span> A set is an <b>unordered</b> collection where every element is unique. Python borrowed this straight from the set theory taught in school math — "Python took the same math concept and turned it into a data type. That's it."</p>
+      <div class="quote">"If you remember these 4 things I'm about to tell you, you will never make a mistake with sets again."</div>
+      <ol>
+        <li><b>Unordered</b> — the most important rule. Unlike lists/tuples (both ordered), a set has no fixed position for its items: <code>{1,2,3}</code> equals <code>{3,2,1}</code>.</li>
+        <li><b>Mutable</b> — you can add and remove items after creation.</li>
+        <li><b>No duplicates</b> — every element must be unique.</li>
+        <li><b>Only immutable items allowed inside</b> — the set container itself is mutable, but nothing mutable (a list, another set, a dict) can go inside it.</li>
+      </ol>
+      <p>Sets are also the tool for real mathematical set operations: union, intersection, difference, symmetric difference.</p>
+      <div class="callout interview">
+        <div class="cal-head">◆ "Are 2D sets possible?" — a set containing a set</div>
+        Posed directly to the class before revealing the answer. <b>No.</b> Sets are mutable, and only immutable things are allowed inside a set — so a set (itself mutable) can never go inside another set. Confirmed by code: <code>{1, 2, {3, 4}}</code> throws <code>TypeError: unhashable type: 'set'</code>, which in plain words means "a mutable type can't live inside a set."
+      </div>
+    </div>
+  </details>
+
+  <!-- 10 -->
+  <details class="section" id="s10" open>
+    <summary><span class="s-num">10</span><span class="s-title">Creating Sets</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# empty
+s = set()
+print(s)
+print(type(s))
+# 1D and 2D
+s1 = {1,2,3}
+print(s1)
+# homo and hetro
+s3 = {1,'hello',4.5,(1,2,3)}
+print(s3)
+# using type conversion
+s4 = set([1,2,3])
+print(s4)
+# duplicates not allowed
+s5 = {1,1,2,2,3,3}
+print(s5)
+# set can't have mutable items
+s6 = {1,2,[3,4]}
+print(s6)">Copy</button>
+        <pre class="code"><span class="cm"># empty</span>
+s = <span class="kw">set</span>()
+<span class="kw">print</span>(s)
+<span class="kw">print</span>(<span class="kw">type</span>(s))
+<span class="cm"># 1D and 2D</span>
+s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>}
+<span class="kw">print</span>(s1)
+<span class="cm"># homo and hetro</span>
+s3 = {<span class="num">1</span>,<span class="str">'hello'</span>,<span class="num">4.5</span>,(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>)}
+<span class="kw">print</span>(s3)
+<span class="cm"># using type conversion</span>
+s4 = <span class="kw">set</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])
+<span class="kw">print</span>(s4)
+<span class="cm"># duplicates not allowed</span>
+s5 = {<span class="num">1</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">3</span>}
+<span class="kw">print</span>(s5)
+<span class="cm"># set can't have mutable items</span>
+s6 = {<span class="num">1</span>,<span class="num">2</span>,[<span class="num">3</span>,<span class="num">4</span>]}
+<span class="kw">print</span>(s6)</pre>
+      </div>
+      <div class="out">set()<br/>&lt;class 'set'&gt;<br/>{1, 2, 3}<br/>{1, 4.5, (1, 2, 3), 'hello'}<br/>{1, 2, 3}<br/>{1, 2, 3}<br/><b>TypeError</b> — unhashable type: 'list'</div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ The {} gotcha — empty curly braces make a dict, not a set!</div>
+        <code>s = {}</code> does <b>not</b> create an empty set — it creates an empty <b>dictionary</b>. Reason: sets and dictionaries share the same <code>{}</code> syntax, and Python gives empty <code>{}</code> the default meaning of "dictionary." The only correct way to make an empty set is the type-conversion function: <code>s = set()</code>. This trips up beginners regularly.
+      </div>
+      <p>A populated set can be written directly with curly braces (no ambiguity once it's non-empty). A heterogeneous set can mix int, string, float, and even a tuple (tuples are immutable, so they're allowed). Creating from a list via <code>set([1,2,3])</code>, or from a list with repeats, automatically drops duplicates.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s1 = {1,2,3}
+s2 = {3,2,1}
+
+print(s1 == s2)">Copy</button>
+        <pre class="code">s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>}
+s2 = {<span class="num">3</span>,<span class="num">2</span>,<span class="num">1</span>}
+
+<span class="kw">print</span>(s1 == s2)</pre>
+      </div>
+      <div class="out">True</div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Sets check content, not order — different from lists &amp; tuples</div>
+        <code>{1,2,3} == {3,2,1}</code> is <b>True</b>. "This doesn't happen with lists, this doesn't happen with tuples" — equality for those checks position too, but a set only checks its content.
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Why doesn't a set print items in the order you added them?</div>
+        This comes down to <b>hashing</b> — a Data Structures &amp; Algorithms concept that decides which position each item lands in internally. "We have <b>zero control</b> over it." How hashing itself works is explicitly outside the scope of this session, but it's why a set's printed order looks scrambled compared to insertion order.
+      </div>
+    </div>
+  </details>
+
+  <!-- 11 -->
+  <details class="section" id="s11" open>
+    <summary><span class="s-num">11</span><span class="s-title">Accessing, Editing, Adding &amp; Deleting</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <h4>Accessing — not possible</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s1 = {1,2,3,4}
+s1[0:3]">Copy</button>
+        <pre class="code">s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>}
+s1[<span class="num">0</span>:<span class="num">3</span>]</pre>
+      </div>
+      <div class="out"><b>TypeError</b> — 'set' object is not subscriptable</div>
+      <p>No positive indexing, no negative indexing, and therefore no slicing either — all for the same reason: sets are unordered, so there is no "first item" to point at.</p>
+      <h4>Editing — not possible</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s1 = {1,2,3,4}
+s1[0] = 100">Copy</button>
+        <pre class="code">s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>}
+s1[<span class="num">0</span>] = <span class="num">100</span></pre>
+      </div>
+      <div class="out"><b>TypeError</b> — 'set' object does not support item assignment</div>
+      <p>Same root cause: editing relies on indexing to locate a slot, and indexing doesn't exist here.</p>
+      <h4>Adding — allowed!</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="S = {1,2,3,4}
+# add
+# S.add(5)
+# update
+S.update([5,6,7])
+print(S)">Copy</button>
+        <pre class="code">S = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>}
+<span class="cm"># add</span>
+<span class="cm"># S.add(5)</span>
+<span class="cm"># update</span>
+S.update([<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>])
+<span class="kw">print</span>(S)</pre>
+      </div>
+      <div class="out">{1, 2, 3, 4, 5, 6, 7}</div>
+      <p><code>.add(x)</code> adds one item — exactly where it lands is decided by hashing, not you. <code>.update([...])</code> adds several items at once, "just like <code>append</code>/<code>extend</code> on a list."</p>
+      <h4>Deleting — 5 different ways</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = {1,2,3,4,5}
+s.clear()
+print(s)">Copy</button>
+        <pre class="code">s = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>}
+s.clear()
+<span class="kw">print</span>(s)</pre>
+      </div>
+      <div class="out">set()</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Method</th><th>What it does</th><th>If item missing</th></tr>
+          <tr><td><code>del s</code></td><td>Deletes the whole set variable</td><td>—</td></tr>
+          <tr><td><code>s.remove(x)</code></td><td>Removes a specific item</td><td>Raises an error</td></tr>
+          <tr><td><code>s.discard(x)</code></td><td>Removes a specific item</td><td>Silently does nothing</td></tr>
+          <tr><td><code>s.pop()</code></td><td>Removes a random item — zero control over which</td><td>—</td></tr>
+          <tr><td><code>s.clear()</code></td><td>Empties the whole set</td><td>—</td></tr>
+        </table>
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Why do both remove() and discard() exist?</div>
+        A viewer asked this directly. "Generally this happens because of different Python versions — one version had a feature, then it was improved in a later version, but the older one wasn't removed because a lot of company codebases still use it." Practical guidance: <code>remove()</code> is useful for <b>catching errors early</b> (it tells you something's wrong — relevant once you learn Exception Handling), while <code>discard()</code> stays silent. Choose based on whether you want to be warned.
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ pop() isn't fully predictable</div>
+        Asked in Q&amp;A whether <code>pop()</code> always deletes the "last" item — the instructor clarifies it can look random or look like the last one, and "the real answer is hidden in hashing — once we understand hashing, we'll probably get this answer." Deferred with an invite to ask again via the course's feedback form.
+      </div>
+    </div>
+  </details>
+
+  <!-- 12 -->
+  <details class="section" id="s12" open>
+    <summary><span class="s-num">12</span><span class="s-title">Set Operations</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="callout story">
+        <div class="cal-head">✎ A real-life reason to reach for sets</div>
+        "How many people in Mumbai bought a phone, and how many in Kolkata — how many bought both? Take the intersection. How many bought either one? Take the union." Comparing two populations is the textbook real-world use case for set operations.
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s1 = {1,2,3,4,5}
+s2 = {4,5,6,7,8}
+s1 | s2
+# Union(|)
+# Intersection(&)
+s1 & s2
+# Difference(-)
+s1 - s2
+s2 - s1
+# Symmetric Difference(^)
+s1 ^ s2
+# Membership Test
+1 not in s1
+# Iteration
+for i in s1:
+  print(i)">Copy</button>
+        <pre class="code">s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>}
+s2 = {<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>}
+s1 | s2
+<span class="cm"># Union(|)</span>
+<span class="cm"># Intersection(&)</span>
+s1 &amp; s2
+<span class="cm"># Difference(-)</span>
+s1 - s2
+s2 - s1
+<span class="cm"># Symmetric Difference(^)</span>
+s1 ^ s2
+<span class="cm"># Membership Test</span>
+<span class="num">1</span> <span class="kw">not in</span> s1
+<span class="cm"># Iteration</span>
+<span class="kw">for</span> i <span class="kw">in</span> s1:
+  <span class="kw">print</span>(i)</pre>
+      </div>
+      <div class="out">1<br/>2<br/>3<br/>4<br/>5</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Operator</th><th>Name</th><th>Meaning</th></tr>
+          <tr><td><code>|</code></td><td>Union</td><td>Every item from both sets, no duplicates</td></tr>
+          <tr><td><code>&amp;</code></td><td>Intersection</td><td>Items common to both</td></tr>
+          <tr><td><code>-</code></td><td>Difference</td><td>Items in the left set but not the right — <b>order matters</b>, <code>s1-s2</code> ≠ <code>s2-s1</code></td></tr>
+          <tr><td><code>^</code></td><td>Symmetric difference</td><td>Everything <i>except</i> the common items</td></tr>
+        </table>
+      </div>
+      <p>Plus the two operations sets share with every collection: <b>membership</b> (<code>in</code>/<code>not in</code>) and <b>iteration</b> (a plain <code>for</code> loop, item by item).</p>
+    </div>
+  </details>
+
+  <!-- 13 -->
+  <details class="section" id="s13" open>
+    <summary><span class="s-num">13</span><span class="s-title">Set Functions</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# len/sum/min/max/sorted
+s = {3,1,4,5,2,7}
+len(s)
+sum(s)
+min(s)
+max(s)
+sorted(s,reverse=True)">Copy</button>
+        <pre class="code"><span class="cm"># len/sum/min/max/sorted</span>
+s = {<span class="num">3</span>,<span class="num">1</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">2</span>,<span class="num">7</span>}
+<span class="kw">len</span>(s)
+<span class="kw">sum</span>(s)
+<span class="kw">min</span>(s)
+<span class="kw">max</span>(s)
+<span class="kw">sorted</span>(s,reverse=<span class="kw">True</span>)</pre>
+      </div>
+      <div class="out">[7, 5, 4, 3, 2, 1]</div>
+      <div class="callout story">
+        <div class="cal-head">✎ Python's consistency-by-design philosophy</div>
+        "Programmers shouldn't have to remember too many things. Once you know list well, tuple feels easy; once you know that, set feels easy too — there's a real consistency in the syntax. I hope beginners are appreciating this: it's one of the core reasons Python's popularity keeps growing." (Unlike, say, C/Java, which have "so many variations" to memorize.)
+      </div>
+      <h4>Every operator has a named-method twin</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# union/update
+s1 = {1,2,3,4,5}
+s2 = {4,5,6,7,8}
+
+s1.union(s1)
+
+s1.update(s2)
+print(s1)
+print(s2)">Copy</button>
+        <pre class="code"><span class="cm"># union/update</span>
+s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>}
+s2 = {<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>}
+
+s1.union(s1)
+
+s1.update(s2)
+<span class="kw">print</span>(s1)
+<span class="kw">print</span>(s2)</pre>
+      </div>
+      <div class="out">{1, 2, 3, 4, 5, 6, 7, 8}<br/>{4, 5, 6, 7, 8}</div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# intersection/intersection_update
+s1 = {1,2,3,4,5}
+s2 = {4,5,6,7,8}
+
+s1.intersection(s2)
+
+s1.intersection_update(s2)
+print(s1)
+print(s2)">Copy</button>
+        <pre class="code"><span class="cm"># intersection/intersection_update</span>
+s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>}
+s2 = {<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>}
+
+s1.intersection(s2)
+
+s1.intersection_update(s2)
+<span class="kw">print</span>(s1)
+<span class="kw">print</span>(s2)</pre>
+      </div>
+      <div class="out">{4, 5}<br/>{4, 5, 6, 7, 8}</div>
+      <div class="callout remember">
+        <div class="cal-head">★ The plain method vs the _update method</div>
+        <code>s1.union(s2)</code> / <code>.intersection(s2)</code> / <code>.difference(s2)</code> / <code>.symmetric_difference(s2)</code> each <b>return a new result</b> without touching the originals. Their <code>_update</code> twins — <code>.update()</code>, <code>.intersection_update()</code>, <code>.difference_update()</code>, <code>.symmetric_difference_update()</code> — <b>permanently overwrite <code>s1</code></b> in place, leaving <code>s2</code> unchanged. Same 4 operations, operator or method, pick whichever you're comfortable with.
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# isdisjoint/issubset/issuperset
+s1 = {1,2,3,4}
+s2 = {7,8,5,6}
+
+s1.isdisjoint(s2)">Copy</button>
+        <pre class="code"><span class="cm"># isdisjoint/issubset/issuperset</span>
+s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>}
+s2 = {<span class="num">7</span>,<span class="num">8</span>,<span class="num">5</span>,<span class="num">6</span>}
+
+s1.isdisjoint(s2)</pre>
+      </div>
+      <div class="out">True</div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s1 = {1,2,3,4,5}
+s2 = {3,4,5}
+
+s1.issuperset(s2)">Copy</button>
+        <pre class="code">s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>}
+s2 = {<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>}
+
+s1.issuperset(s2)</pre>
+      </div>
+      <div class="out">True</div>
+      <ul>
+        <li><code>isdisjoint()</code> — True if the two sets share <b>zero</b> items.</li>
+        <li><code>issubset()</code> — True if every item of this set is contained in the other.</li>
+        <li><code>issuperset()</code> — True if this set contains every item of the other.</li>
+      </ul>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# copy
+s1 = {1,2,3}
+s2 = s1.copy()
+
+print(s1)
+print(s2)">Copy</button>
+        <pre class="code"><span class="cm"># copy</span>
+s1 = {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>}
+s2 = s1.copy()
+
+<span class="kw">print</span>(s1)
+<span class="kw">print</span>(s2)</pre>
+      </div>
+      <div class="out">{1, 2, 3}<br/>{1, 2, 3}</div>
+      <p><code>.copy()</code> makes an independent copy — a genuinely different object in memory, same as list's <code>.copy()</code> from Session 1.</p>
+    </div>
+  </details>
+
+  <!-- 14 -->
+  <details class="section" id="s14" open>
+    <summary><span class="s-num">14</span><span class="s-title">Frozenset</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="quote">"Frozen set is the sibling of set — an immutable version of a set object."</div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# create frozenset
+fs1 = frozenset([1,2,3])
+fs2 = frozenset([3,4,5])
+
+fs1 | fs2">Copy</button>
+        <pre class="code"><span class="cm"># create frozenset</span>
+fs1 = <span class="kw">frozenset</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])
+fs2 = <span class="kw">frozenset</span>([<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>])
+
+fs1 | fs2</pre>
+      </div>
+      <div class="out">frozenset({1, 2, 3, 4, 5})</div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Which set operations work on a frozenset?</div>
+        Posed as a quick yes/no to the class. <b>All of union, intersection, difference and symmetric difference work</b>, because they're all <b>READ</b> operations — they don't change the set, only report a computed result. What does <i>not</i> work: <code>pop()</code>, <code>remove()</code>, <code>discard()</code>, <code>update()</code>, <code>add()</code> — every operation whose whole job is to <b>change</b> the set, since a frozenset can never change.
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Meta-lesson</div>
+        "If you understand sets well, apply common sense and you'll figure out on your own which function works on a frozenset and which doesn't." Frozen set = immutable version of set, nothing more.
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# When to use
+# 2D sets
+fs = frozenset([1,2,frozenset([3,4])])
+fs">Copy</button>
+        <pre class="code"><span class="cm"># When to use</span>
+<span class="cm"># 2D sets</span>
+fs = <span class="kw">frozenset</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="kw">frozenset</span>([<span class="num">3</span>,<span class="num">4</span>])])
+fs</pre>
+      </div>
+      <div class="out">frozenset({1, 2, frozenset({3, 4})})</div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Are 2D frozensets possible?</div>
+        <b>Yes</b> — a frozenset can contain another frozenset, since frozensets are immutable and therefore satisfy "only immutable items allowed inside." This is exactly the opposite of a regular set, which can never contain another set. (A plain list still can't go inside a frozenset either — lists are always mutable.)
+      </div>
+      <p><b>When to use:</b> a frozenset for read-only, "ready-made" data you'll never change; a regular set when the application expects the data to keep growing or changing.</p>
+    </div>
+  </details>
+
+  <!-- 15 -->
+  <details class="section" id="s15" open>
+    <summary><span class="s-num">15</span><span class="s-title">Set Comprehension</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Exactly the same idea as list/tuple comprehension — "nothing different." Curly braces instead of square ones, and duplicates automatically collapse.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# examples
+{i**2 for i in range(1,11) if i>5}">Copy</button>
+        <pre class="code"><span class="cm"># examples</span>
+
+{i**<span class="num">2</span> <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>,<span class="num">11</span>) <span class="kw">if</span> i&gt;<span class="num">5</span>}</pre>
+      </div>
+      <div class="out">{36, 49, 64, 81, 100}</div>
+      <p>Loop over <code>1..10</code>, keep only values where <code>i &gt; 5</code>, and store <code>i**2</code> for each. Same filter-then-transform shape as list comprehension from the previous session — set comprehension just wraps it in <code>{}</code>.</p>
+      <div class="callout remember">
+        <div class="cal-head">★ Sets, complete</div>
+        With this, sets are done: unordered, mutable, unique, immutable-contents-only — plus their operations, functions, frozenset sibling, and comprehension syntax.
+      </div>
+    </div>
+  </details>
+
+  <div class="part-heading">Part C — Dictionary</div>
+
+  <!-- 16 -->
+  <details class="section" id="s16" open>
+    <summary><span class="s-num">16</span><span class="s-title">What Is a Dictionary? — 4 Key Rules</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="quote">"A very, very powerful data type" — used constantly in general programming and heavily in Data Science; "going forward when we study NumPy and Pandas, you'll see we use dictionaries a lot."</div>
+      <p><span class="tag concept">Core idea</span> A dictionary is a collection of <b>key-value pairs</b>, used to store data like a <b>map</b> — different from every data type so far, which each hold a single item per slot. Also called a "Map" or "Associative Array" in other languages.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="dict = { 'name' : 'nitish' , 'age' : 33 , 'gender' : 'male' }">Copy</button>
+        <pre class="code"><span class="kw">dict</span> = { <span class="str">'name'</span> : <span class="str">'nitish'</span> , <span class="str">'age'</span> : <span class="num">33</span> , <span class="str">'gender'</span> : <span class="str">'male'</span> }</pre>
+      </div>
+      <h4>4 rules to never get confused</h4>
+      <ol>
+        <li><b>Mutable</b> — items can be changed, deleted, and new key-value pairs added.</li>
+        <li><b>Indexing has no meaning</b> — there is no "give me the first key-value pair" by position.</li>
+        <li><b>Keys can't repeat</b> — every key must be unique.</li>
+        <li><b>Keys can never be mutable</b> — no list, set, or dict as a key. <b>Values have no such restriction</b> — anything can be a value.</li>
+      </ol>
+      <p><b>Plan for this topic:</b> Create → Access → Add → Remove → Edit → Operations → Functions.</p>
+    </div>
+  </details>
+
+  <!-- 17 -->
+  <details class="section" id="s17" open>
+    <summary><span class="s-num">17</span><span class="s-title">Creating Dictionaries</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# empty dictionary
+d = {}
+d
+# 1D dictionary
+d1 = { 'name' : 'nitish' ,'gender' : 'male' }
+d1
+# with mixed keys
+d2 = {(1,2,3):1,'hello':'world'}
+d2
+# 2D dictionary -> JSON
+s = {
+    'name':'nitish',
+     'college':'bit',
+     'sem':4,
+     'subjects':{
+         'dsa':50,
+         'maths':67,
+         'english':34
+     }
+}
+s
+# using sequence and dict function
+d4 = dict([('name','nitish'),('age',32),(3,3)])
+d4
+# duplicate keys
+d5 = {'name':'nitish','name':'rahul'}
+d5
+# mutable items as keys
+d6 = {'name':'nitish',(1,2,3):2}
+print(d6)">Copy</button>
+        <pre class="code"><span class="cm"># empty dictionary</span>
+d = {}
+d
+<span class="cm"># 1D dictionary</span>
+d1 = { <span class="str">'name'</span> : <span class="str">'nitish'</span> ,<span class="str">'gender'</span> : <span class="str">'male'</span> }
+d1
+<span class="cm"># with mixed keys</span>
+d2 = {(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>):<span class="num">1</span>,<span class="str">'hello'</span>:<span class="str">'world'</span>}
+d2
+<span class="cm"># 2D dictionary -&gt; JSON</span>
+s = {
+    <span class="str">'name'</span>:<span class="str">'nitish'</span>,
+     <span class="str">'college'</span>:<span class="str">'bit'</span>,
+     <span class="str">'sem'</span>:<span class="num">4</span>,
+     <span class="str">'subjects'</span>:{
+         <span class="str">'dsa'</span>:<span class="num">50</span>,
+         <span class="str">'maths'</span>:<span class="num">67</span>,
+         <span class="str">'english'</span>:<span class="num">34</span>
+     }
+}
+s
+<span class="cm"># using sequence and dict function</span>
+d4 = <span class="kw">dict</span>([(<span class="str">'name'</span>,<span class="str">'nitish'</span>),(<span class="str">'age'</span>,<span class="num">32</span>),(<span class="num">3</span>,<span class="num">3</span>)])
+d4
+<span class="cm"># duplicate keys</span>
+d5 = {<span class="str">'name'</span>:<span class="str">'nitish'</span>,<span class="str">'name'</span>:<span class="str">'rahul'</span>}
+d5
+<span class="cm"># mutable items as keys</span>
+d6 = {<span class="str">'name'</span>:<span class="str">'nitish'</span>,(<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>):<span class="num">2</span>}
+<span class="kw">print</span>(d6)</pre>
+      </div>
+      <div class="out">{'name': 'nitish', (1, 2, 3): 2}</div>
+      <p>Empty <code>{}</code> here correctly makes a dict (contrast with the set's ambiguity — this is the "default" meaning of curly braces). A 1D dict is homogeneous-purpose; keys can be mixed types as long as they're immutable (a tuple key is fine). A tuple key works — <code>(1,2,3): 2</code> — because tuples are immutable.</p>
+      <div class="callout story">
+        <div class="cal-head">✎ The 2D dictionary is literally what JSON looks like</div>
+        The <code>s</code> example (name, college, sem, and a nested <code>subjects</code> dict of marks) is called a <b>2D dictionary</b> — a dictionary inside a dictionary. "If you've ever heard of JSON, JSON actually follows this exact format." Later, when fetching data from APIs, that data arrives as nested dictionaries just like this.
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Duplicate keys silently collapse — last value wins</div>
+        <code>d5 = {'name':'nitish','name':'rahul'}</code> doesn't error — Python just keeps the <b>last</b> value assigned to that key ('rahul'), silently discarding the first. This is the mechanism proving "keys can't repeat" — Python doesn't reject the duplicate, it resolves it by overwriting.
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Is a dictionary ordered?</div>
+        Raised directly in the chat. The instructor's answer in-session was light — flagged as something that becomes clearer with more examples (related to nested/"double loop" cases) rather than a one-line rule here. Worth digging into as you go deeper.
+      </div>
+    </div>
+  </details>
+
+  <!-- 18 -->
+  <details class="section" id="s18" open>
+    <summary><span class="s-num">18</span><span class="s-title">Accessing, Adding, Removing &amp; Editing</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <h4>Accessing — by key, never by position</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="my_dict = {'name': 'Jack', 'age': 26}
+# []
+my_dict['age']
+# get
+my_dict.get('age')
+
+s['subjects']['maths']">Copy</button>
+        <pre class="code">my_dict = {<span class="str">'name'</span>: <span class="str">'Jack'</span>, <span class="str">'age'</span>: <span class="num">26</span>}
+<span class="cm"># []</span>
+my_dict[<span class="str">'age'</span>]
+<span class="cm"># get</span>
+my_dict.get(<span class="str">'age'</span>)
+
+s[<span class="str">'subjects'</span>][<span class="str">'maths'</span>]</pre>
+      </div>
+      <div class="out">67</div>
+      <p>Two equivalent ways to read a value: square-bracket access <code>d['key']</code>, or the <code>.get('key')</code> method — both give the same result. For a 2D dict, chain the keys: <code>s['subjects']['maths']</code> first grabs the nested <code>subjects</code> dict, then looks up <code>'maths'</code> inside it.</p>
+      <h4>Adding a new key-value pair</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="d4['gender'] = 'male'
+d4
+d4['weight'] = 72
+d4
+
+s['subjects']['ds'] = 75
+s">Copy</button>
+        <pre class="code">d4[<span class="str">'gender'</span>] = <span class="str">'male'</span>
+d4
+d4[<span class="str">'weight'</span>] = <span class="num">72</span>
+d4
+
+s[<span class="str">'subjects'</span>][<span class="str">'ds'</span>] = <span class="num">75</span>
+s</pre>
+      </div>
+      <div class="out">{'name': 'nitish', 'college': 'bit', 'sem': 4,<br/> 'subjects': {'dsa': 50, 'maths': 67, 'english': 34, 'ds': 75}}</div>
+      <p>Assigning to a key that doesn't exist yet simply <b>creates</b> it. Same one level deeper for a nested dict — go into <code>subjects</code> first, then assign the new key there.</p>
+      <h4>Removing a key-value pair</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="d = {'name': 'nitish', 'age': 32, 3: 3, 'gender': 'male', 'weight': 72}
+# clear
+d.clear()
+print(d)
+
+del s['subjects']['maths']
+s">Copy</button>
+        <pre class="code">d = {<span class="str">'name'</span>: <span class="str">'nitish'</span>, <span class="str">'age'</span>: <span class="num">32</span>, <span class="num">3</span>: <span class="num">3</span>, <span class="str">'gender'</span>: <span class="str">'male'</span>, <span class="str">'weight'</span>: <span class="num">72</span>}
+<span class="cm"># clear</span>
+d.clear()
+<span class="kw">print</span>(d)
+
+<span class="kw">del</span> s[<span class="str">'subjects'</span>][<span class="str">'maths'</span>]
+s</pre>
+      </div>
+      <div class="out">{}<br/><br/>{'name': 'nitish', 'college': 'bit', 'sem': 4,<br/> 'subjects': {'dsa': 50, 'english': 34, 'ds': 75}}</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Method</th><th>What it does</th></tr>
+          <tr><td><code>d.pop(key)</code></td><td>Removes the pair for that key</td></tr>
+          <tr><td><code>d.popitem()</code></td><td>Removes the most-recently-added pair</td></tr>
+          <tr><td><code>del d[key]</code></td><td>Deletes a specific key-value pair</td></tr>
+          <tr><td><code>del d</code></td><td>Deletes the whole dictionary</td></tr>
+          <tr><td><code>d.clear()</code></td><td>Empties it, leaves <code>{}</code></td></tr>
+        </table>
+      </div>
+      <h4>Editing a key-value pair</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s['subjects']['dsa'] = 80
+s">Copy</button>
+        <pre class="code">s[<span class="str">'subjects'</span>][<span class="str">'dsa'</span>] = <span class="num">80</span>
+s</pre>
+      </div>
+      <div class="out">{'name': 'nitish', 'college': 'bit', 'sem': 5,<br/> 'subjects': {'dsa': 80, 'english': 34, 'ds': 75}}</div>
+      <div class="callout remember">
+        <div class="cal-head">★ The 1D → 2D rule repeats everywhere</div>
+        "Whatever you learned for a 1D dict applies exactly the same in 2D, just one level deeper — apply a little common sense and you won't make mistakes." Accessing, adding, removing and editing nested values is just chaining the same operations you already know.
+      </div>
+    </div>
+  </details>
+
+  <!-- 19 -->
+  <details class="section" id="s19" open>
+    <summary><span class="s-num">19</span><span class="s-title">Dictionary Operations &amp; Functions</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <h4>Only 2 operations — fewer than list/tuple/set</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(s)
+
+'name' in s">Copy</button>
+        <pre class="code"><span class="kw">print</span>(s)
+
+<span class="str">'name'</span> <span class="kw">in</span> s</pre>
+      </div>
+      <div class="out">True</div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="d = {'name':'nitish','gender':'male','age':33}
+
+for i in d:
+  print(i,d[i])">Copy</button>
+        <pre class="code">d = {<span class="str">'name'</span>:<span class="str">'nitish'</span>,<span class="str">'gender'</span>:<span class="str">'male'</span>,<span class="str">'age'</span>:<span class="num">33</span>}
+
+<span class="kw">for</span> i <span class="kw">in</span> d:
+  <span class="kw">print</span>(i,d[i])</pre>
+      </div>
+      <div class="out">name nitish<br/>gender male<br/>age 33</div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Membership and iteration both act on keys, not values</div>
+        <code>'name' in s</code> checks whether <code>'name'</code> is a <b>key</b> — membership never looks at values. A plain <code>for i in d</code> loop iterates over the <b>keys</b> only; to print values alongside, you need <code>d[i]</code> inside the loop, as shown above.
+      </div>
+      <h4>Functions</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# len/sorted
+len(d)
+print(d)
+sorted(d,reverse=True)
+max(d)">Copy</button>
+        <pre class="code"><span class="cm"># len/sorted</span>
+<span class="kw">len</span>(d)
+<span class="kw">print</span>(d)
+<span class="kw">sorted</span>(d,reverse=<span class="kw">True</span>)
+<span class="kw">max</span>(d)</pre>
+      </div>
+      <div class="out">'name'</div>
+      <p><code>sorted()</code>, <code>min()</code>, and <code>max()</code> all operate on the <b>keys</b> — for string keys, comparison is based on ASCII value.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# items/keys/values
+print(d)
+
+print(d.items())
+print(d.keys())
+print(d.values())">Copy</button>
+        <pre class="code"><span class="cm"># items/keys/values</span>
+<span class="kw">print</span>(d)
+
+<span class="kw">print</span>(d.items())
+<span class="kw">print</span>(d.keys())
+<span class="kw">print</span>(d.values())</pre>
+      </div>
+      <div class="out">{'name': 'nitish', 'gender': 'male', 'age': 33}<br/>dict_items([('name', 'nitish'), ('gender', 'male'), ('age', 33)])<br/>dict_keys(['name', 'gender', 'age'])<br/>dict_values(['nitish', 'male', 33])</div>
+      <p><code>.items()</code> is the one that matters most going forward — it turns the dict into a list of (key, value) tuples, and it's the workhorse behind dictionary comprehension next.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# update
+d1 = {1:2,3:4,4:5}
+d2 = {4:7,6:8}
+
+d1.update(d2)
+print(d1)">Copy</button>
+        <pre class="code"><span class="cm"># update</span>
+d1 = {<span class="num">1</span>:<span class="num">2</span>,<span class="num">3</span>:<span class="num">4</span>,<span class="num">4</span>:<span class="num">5</span>}
+d2 = {<span class="num">4</span>:<span class="num">7</span>,<span class="num">6</span>:<span class="num">8</span>}
+
+d1.update(d2)
+<span class="kw">print</span>(d1)</pre>
+      </div>
+      <div class="out">{1: 2, 3: 4, 4: 7, 6: 8}</div>
+      <p><code>.update()</code> merges another dict in <b>permanently</b> — matching keys get overwritten with <code>d2</code>'s value (key <code>4</code>: <code>5</code> → <code>7</code>), and any new keys get added (key <code>6</code>).</p>
+    </div>
+  </details>
+
+  <!-- 20 -->
+  <details class="section" id="s20" open>
+    <summary><span class="s-num">20</span><span class="s-title">Dictionary Comprehension</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p><span class="tag concept">Core idea</span> Same underlying pattern as list/tuple/set comprehension. General shape: <code>{key: value for variable in iterable}</code>.</p>
+      <h4>1. Squares dictionary</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# print 1st 10 numbers and their squares
+{i:i**2 for i in range(1,11)}">Copy</button>
+        <pre class="code"><span class="cm"># print 1st 10 numbers and their squares</span>
+{i:i**<span class="num">2</span> <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>,<span class="num">11</span>)}</pre>
+      </div>
+      <div class="out">{1: 1, 2: 4, 3: 9, 4: 16, 5: 25, 6: 36, 7: 49, 8: 64, 9: 81, 10: 100}</div>
+      <h4>2. Transform an existing dict's values (km → miles)</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="distances = {'delhi':1000,'mumbai':2000,'bangalore':3000}
+{key:value*0.62 for (key,value) in distances.items()}">Copy</button>
+        <pre class="code">distances = {<span class="str">'delhi'</span>:<span class="num">1000</span>,<span class="str">'mumbai'</span>:<span class="num">2000</span>,<span class="str">'bangalore'</span>:<span class="num">3000</span>}
+{key:value*<span class="num">0.62</span> <span class="kw">for</span> (key,value) <span class="kw">in</span> distances.items()}</pre>
+      </div>
+      <div class="out">{'delhi': 620.0, 'mumbai': 1240.0, 'bangalore': 1860.0}</div>
+      <p>This is exactly where <code>.items()</code> earns its keep — unpacking each <code>(key, value)</code> pair directly inside the comprehension.</p>
+      <h4>3. Build a dict from two lists with zip()</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="days = ["Sunday", "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"]
+temp_C = [30.5,32.6,31.8,33.4,29.8,30.2,29.9]
+
+{i:j for (i,j) in zip(days,temp_C)}">Copy</button>
+        <pre class="code">days = [<span class="str">"Sunday"</span>, <span class="str">"Monday"</span>,<span class="str">"Tuesday"</span>,<span class="str">"Wednesday"</span>,<span class="str">"Thursday"</span>,<span class="str">"Friday"</span>,<span class="str">"Saturday"</span>]
+temp_C = [<span class="num">30.5</span>,<span class="num">32.6</span>,<span class="num">31.8</span>,<span class="num">33.4</span>,<span class="num">29.8</span>,<span class="num">30.2</span>,<span class="num">29.9</span>]
+
+{i:j <span class="kw">for</span> (i,j) <span class="kw">in</span> zip(days,temp_C)}</pre>
+      </div>
+      <div class="out">{'Sunday': 30.5, 'Monday': 32.6, 'Tuesday': 31.8, 'Wednesday': 33.4,<br/> 'Thursday': 29.8, 'Friday': 30.2, 'Saturday': 29.9}</div>
+      <h4>4. Filter with an if condition</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="products = {'phone':10,'laptop':0,'charger':32,'tablet':0}
+
+{key:value for (key,value) in products.items() if value>0}">Copy</button>
+        <pre class="code">products = {<span class="str">'phone'</span>:<span class="num">10</span>,<span class="str">'laptop'</span>:<span class="num">0</span>,<span class="str">'charger'</span>:<span class="num">32</span>,<span class="str">'tablet'</span>:<span class="num">0</span>}
+
+{key:value <span class="kw">for</span> (key,value) <span class="kw">in</span> products.items() <span class="kw">if</span> value&gt;<span class="num">0</span>}</pre>
+      </div>
+      <div class="out">{'phone': 10, 'charger': 32}</div>
+      <p>Out-of-stock items (0 quantity) get filtered out entirely — only phone and charger survive.</p>
+      <h4>5. Nested comprehension — multiplication tables</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# Nested Comprehension
+# print tables of number from 2 to 4
+{i:{j:i*j for j in range(1,11)} for i in range(2,5)}">Copy</button>
+        <pre class="code"><span class="cm"># Nested Comprehension</span>
+<span class="cm"># print tables of number from 2 to 4</span>
+{i:{j:i*j <span class="kw">for</span> j <span class="kw">in</span> range(<span class="num">1</span>,<span class="num">11</span>)} <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">2</span>,<span class="num">5</span>)}</pre>
+      </div>
+      <div class="out">{2: {1: 2, 2: 4, ..., 10: 20},<br/> 3: {1: 3, 2: 6, ..., 10: 30},<br/> 4: {1: 4, 2: 8, ..., 10: 40}}</div>
+      <div class="callout story">
+        <div class="cal-head">✎ How the instructor traced this live</div>
+        Outer loop picks <code>i=2</code> → forms key <code>2</code> → for that key's <b>value</b>, an entire inner comprehension runs, looping <code>j</code> from 1 to 10 and computing <code>i*j</code> each time, building the nested dict <code>{1:2, 2:4, ..., 10:20}</code> → inner loop finishes → outer loop moves to <code>i=3</code> → repeats. He walked through this using <b>Python Tutor</b> (a visualizer), noting "this isn't something you understand by explanation alone — it's something you understand by watching it execute." Advice: "grab pen and paper, work through it, and you'll get it."
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Should you actually write comprehensions like this in real code?</div>
+        Instructor's honest personal take: <b>"Personally I don't write it, because it can hurt code readability."</b> Dense comprehensions are confusing in a team setting — "some people are comfortable with it, some aren't, so it's better to avoid it" in production/collaborative code. He still teaches it because "going forward you'll read other people's code, and code online — so you shouldn't be confused when you encounter it." Learn to <i>read</i> it fluently, even if you choose not to <i>write</i> the nested versions yourself.
+      </div>
+    </div>
+  </details>
+
+  <!-- 21 Cheat sheet -->
+  <details class="section" id="s21" open>
+    <summary><span class="s-num">★</span><span class="s-title">60-Second Cheat Sheet</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="cheat-grid">
+        <div class="cheat-card"><h5>Tuple = immutable list</h5><p>Same behavior as lists, minus every write operation</p></div>
+        <div class="cheat-card"><h5>Single-item tuple</h5><p>Needs a trailing comma: <code>(2,)</code> not <code>(2)</code></p></div>
+        <div class="cheat-card"><h5>Tuple advantages</h5><p>Faster, less memory, safer to debug — but fewer built-ins</p></div>
+        <div class="cheat-card"><h5>Swap trick</h5><p><code>a,b = b,a</code> — no temp variable needed</p></div>
+        <div class="cheat-card"><h5>Set = unordered, unique</h5><p>Mutable container, but only immutable items allowed inside</p></div>
+        <div class="cheat-card"><h5>Empty {} trap</h5><p><code>{}</code> makes a dict, not a set — use <code>set()</code></p></div>
+        <div class="cheat-card"><h5>Set ops</h5><p><code>|</code> union · <code>&amp;</code> intersection · <code>-</code> difference · <code>^</code> symmetric diff</p></div>
+        <div class="cheat-card"><h5>remove vs discard</h5><p>remove errors if missing · discard stays silent</p></div>
+        <div class="cheat-card"><h5>Frozenset</h5><p>Immutable set — all read ops work, all write ops don't</p></div>
+        <div class="cheat-card"><h5>Dict = key-value pairs</h5><p>Keys unique &amp; immutable · values unrestricted</p></div>
+        <div class="cheat-card"><h5>Access a dict</h5><p><code>d['key']</code> or <code>d.get('key')</code> — never by position</p></div>
+        <div class="cheat-card"><h5>Membership &amp; iteration</h5><p>Both act on keys only, not values</p></div>
+        <div class="cheat-card"><h5>.items()</h5><p>Turns a dict into (key, value) tuples — powers dict comprehension</p></div>
+        <div class="cheat-card"><h5>Comprehension shape</h5><p><code>{key: value for x in iterable if cond}</code></p></div>
+      </div>
+    </div>
+  </details>
+
+  <footer>Built from the CampusX Session 5 transcript and class notebook · keep this open while you revise</footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.getAttribute('data-copy') || '';
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(function(){ btn.textContent = old; }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){
+          fallbackCopy(text); done();
+        });
+      } else {
+        fallbackCopy(text); done();
+      }
+    });
+  });
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  }
+</script>
