@@ -1,0 +1,794 @@
+<title>Python Fundamentals</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg:#F4F6F5; --surface:#FFFFFF; --surface-2:#ECF1EE;
+    --ink:#16241F; --ink-soft:#4B5D57; --border:#D7E0DB;
+    --accent:#0E7C66; --accent-soft:#DCEFE8;
+    --accent-2:#C67F0E; --accent-2-soft:#FBEBD2;
+    --danger:#B8453A; --danger-soft:#F8E3DF;
+    --interview:#5551C9; --interview-soft:#E7E7FA;
+    --code-bg:#12201B; --code-ink:#BEF6DC; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#6E8079; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(20,40,35,.07), 0 10px 28px rgba(20,40,35,.08);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+      --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+      --accent:#3FCFA3; --accent-soft:#153228;
+      --accent-2:#F0B84D; --accent-2-soft:#33291A;
+      --danger:#E28074; --danger-soft:#3A211E;
+      --interview:#ABABF7; --interview-soft:#231F3D;
+      --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+    --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+    --accent:#3FCFA3; --accent-soft:#153228;
+    --accent-2:#F0B84D; --accent-2-soft:#33291A;
+    --danger:#E28074; --danger-soft:#3A211E;
+    --interview:#ABABF7; --interview-soft:#231F3D;
+    --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Work Sans', system-ui, sans-serif;
+    padding-inline:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Fraunces', Georgia, serif; text-wrap:balance; margin:0; }
+  a{ color:var(--accent); }
+  .wrap{ max-width:760px; margin:0 auto; padding-block:28px 80px; }
+
+  .hero{
+    background:linear-gradient(155deg, var(--surface) 0%, var(--surface-2) 100%);
+    border:1px solid var(--border); border-radius:20px;
+    padding:28px 26px; box-shadow:var(--shadow); margin-bottom:18px;
+    position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+    background:var(--accent-soft); border-radius:50%; opacity:.7; z-index:0;
+  }
+  .hero-inner{ position:relative; z-index:1; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-soft);
+    padding:5px 11px; border-radius:100px; margin-bottom:12px;
+  }
+  .hero h1{ font-size:clamp(28px,6vw,40px); font-weight:700; line-height:1.08; }
+  .hero p.sub{ margin:10px 0 0; color:var(--ink-soft); font-size:15.5px; max-width:52ch; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .meta-chip{
+    font-size:12.5px; font-weight:600; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:5px 10px; font-family:'JetBrains Mono',monospace;
+  }
+
+  .toc{
+    display:flex; gap:8px; overflow-x:auto; padding:4px 2px 14px;
+    margin-bottom:6px; scrollbar-width:thin;
+  }
+  .toc a{
+    flex:0 0 auto; text-decoration:none; font-size:13px; font-weight:600;
+    color:var(--ink-soft); background:var(--surface); border:1px solid var(--border);
+    padding:7px 13px; border-radius:100px; white-space:nowrap;
+  }
+  .toc a span{ color:var(--accent); font-family:'JetBrains Mono',monospace; margin-right:5px; }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 22px; }
+  .tag{
+    font-size:11.5px; font-weight:700; letter-spacing:.02em;
+    padding:4px 10px; border-radius:7px; display:inline-flex; align-items:center; gap:5px;
+  }
+  .tag.remember{ background:var(--accent-2-soft); color:var(--accent-2); }
+  .tag.gotcha{ background:var(--danger-soft); color:var(--danger); }
+  .tag.interview{ background:var(--interview-soft); color:var(--interview); }
+  .tag.concept{ background:var(--accent-soft); color:var(--accent); }
+  .tag.story{ background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--border); }
+
+  details.section{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    margin-bottom:14px; box-shadow:var(--shadow); overflow:hidden;
+  }
+  details.section > summary{
+    list-style:none; cursor:pointer; padding:18px 20px;
+    display:flex; align-items:center; gap:13px; user-select:none;
+  }
+  details.section > summary::-webkit-details-marker{ display:none; }
+  .s-num{
+    flex:0 0 auto; width:34px; height:34px; border-radius:10px;
+    background:var(--accent-soft); color:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13.5px;
+  }
+  .s-title{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; flex:1 1 auto; }
+  .chev{ color:var(--ink-soft); transition:transform .2s ease; flex:0 0 auto; }
+  details[open] > summary .chev{ transform:rotate(90deg); }
+  .s-body{ padding:0 20px 22px; }
+  .s-body > *:first-child{ margin-top:0; }
+  .s-body p{ line-height:1.65; color:var(--ink); font-size:15px; margin:0 0 12px; }
+  .s-body h4{ font-family:'Work Sans',sans-serif; font-size:14.5px; font-weight:700; margin:18px 0 8px; color:var(--ink); }
+  .s-body ul, .s-body ol{ margin:0 0 12px; padding-left:22px; line-height:1.65; font-size:15px; }
+  .s-body li{ margin-bottom:5px; }
+  .quote{
+    font-family:'Fraunces',serif; font-style:italic; font-size:15.5px;
+    color:var(--ink-soft); border-left:3px solid var(--accent);
+    padding:2px 0 2px 14px; margin:12px 0;
+  }
+
+  .callout{
+    border-radius:12px; padding:13px 15px; margin:14px 0; font-size:14.5px; line-height:1.6;
+    border:1px solid transparent;
+  }
+  .callout .cal-head{ font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; display:flex; align-items:center; gap:6px; }
+  .callout.remember{ background:var(--accent-2-soft); color:var(--ink); border-color:color-mix(in srgb, var(--accent-2) 30%, transparent); }
+  .callout.remember .cal-head{ color:var(--accent-2); }
+  .callout.gotcha{ background:var(--danger-soft); color:var(--ink); border-color:color-mix(in srgb, var(--danger) 30%, transparent); }
+  .callout.gotcha .cal-head{ color:var(--danger); }
+  .callout.interview{ background:var(--interview-soft); color:var(--ink); border-color:color-mix(in srgb, var(--interview) 30%, transparent); }
+  .callout.interview .cal-head{ color:var(--interview); }
+  .callout.story{ background:var(--surface-2); color:var(--ink); border-color:var(--border); }
+  .callout.story .cal-head{ color:var(--ink-soft); }
+
+  .code-wrap{ position:relative; margin:12px 0; border-radius:12px; overflow:hidden; box-shadow:var(--shadow); }
+  pre.code{
+    background:var(--code-bg); color:var(--code-ink); margin:0; padding:14px 44px 14px 16px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6;
+    overflow-x:auto; white-space:pre;
+  }
+  pre.code .kw{ color:var(--code-kw); }
+  pre.code .str{ color:var(--code-str); }
+  pre.code .cm{ color:var(--code-cm); }
+  pre.code .num{ color:var(--code-num); }
+  .copy-btn{
+    position:absolute; top:8px; right:8px; background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18); color:#cfe9df; border-radius:7px;
+    font-family:'Work Sans',sans-serif; font-size:11px; font-weight:600;
+    padding:5px 9px; cursor:pointer;
+  }
+  .copy-btn:hover{ background:rgba(255,255,255,.16); }
+  .out{
+    background:var(--surface-2); border:1px dashed var(--border); border-radius:10px;
+    padding:9px 13px; font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    color:var(--ink-soft); margin:-4px 0 12px;
+  }
+  .out b{ color:var(--ink); font-weight:600; }
+
+  .tbl-wrap{ overflow-x:auto; margin:14px 0; border-radius:12px; border:1px solid var(--border); }
+  table{ border-collapse:collapse; width:100%; font-size:13.5px; min-width:460px; }
+  th{
+    background:var(--surface-2); text-align:left; padding:9px 12px; font-weight:700;
+    color:var(--ink); border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  td{ padding:9px 12px; border-bottom:1px solid var(--border); color:var(--ink); vertical-align:top; }
+  tr:last-child td{ border-bottom:none; }
+  td code, li code, p code{
+    font-family:'JetBrains Mono',monospace; background:var(--surface-2); padding:1px 6px;
+    border-radius:5px; font-size:.92em; color:var(--accent);
+  }
+
+  .cheat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin:14px 0; }
+  .cheat-card{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:13px 14px;
+  }
+  .cheat-card h5{ margin:0 0 6px; font-size:13px; font-family:'JetBrains Mono',monospace; color:var(--accent); font-weight:700; }
+  .cheat-card p{ margin:0; font-size:13px; color:var(--ink-soft); line-height:1.55; }
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:12.5px; margin-top:26px; }
+
+  @media (max-width:480px){
+    .s-title{ font-size:17px; }
+    .hero h1{ font-size:26px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">● CampusX &nbsp;·&nbsp; Data Science Mentorship &nbsp;·&nbsp; Session 1</span>
+      <h1>Python Fundamentals</h1>
+      <p class="sub">Complete revision notes — why Python, output, data types, variables, comments, keywords, input, type conversion, and literals. Built to scan fast and stick.</p>
+      <div class="meta-row">
+        <span class="meta-chip">10 sections</span>
+        <span class="meta-chip">first class · kept deliberately easy</span>
+        <span class="meta-chip">source: transcript + class notebook</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="tag remember">★ Remember</span>
+    <span class="tag gotcha">⚠ Gotcha</span>
+    <span class="tag interview">◆ Interview</span>
+    <span class="tag concept">● Core idea</span>
+    <span class="tag story">✎ Analogy</span>
+  </div>
+
+  <nav class="toc" aria-label="Table of contents">
+    <a href="#s1"><span>01</span>Why Python</a>
+    <a href="#s2"><span>02</span>print()</a>
+    <a href="#s3"><span>03</span>Data Types</a>
+    <a href="#s4"><span>04</span>Variables</a>
+    <a href="#s5"><span>05</span>Comments</a>
+    <a href="#s6"><span>06</span>Keywords &amp; IDs</a>
+    <a href="#s7"><span>07</span>User Input</a>
+    <a href="#s8"><span>08</span>Type Conversion</a>
+    <a href="#s9"><span>09</span>Literals</a>
+    <a href="#s10"><span>★</span>Cheat Sheet</a>
+  </nav>
+
+  <!-- 1 -->
+  <details class="section" id="s1" open>
+    <summary><span class="s-num">01</span><span class="s-title">Why Python?</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Before any syntax — why this language, and why it took over data science.</p>
+
+      <div class="callout story">
+        <div class="cal-head">✎ The Mohabbatein analogy</div>
+        Java's personality is like Amitabh Bachchan's character in <i>Mohabbatein</i> — strict, disciplined, rigid: write code exactly one way or you get an error. Python's personality is like Shah Rukh Khan's character in the same film — welcoming to beginners: "it's okay if you don't know how to code — come, make mistakes, and learn." Python is the easy-going, forgiving language.
+      </div>
+
+      <h4>"Batteries included"</h4>
+      <p>This is the literal phrase used to define Python: a language with <b>batteries included</b> — tons of pre-built functionality (data types, functions, operators) so you're not writing everything from scratch. Reversing a string in C means writing your own loop; in Python it's a one-line slice. Philosophy: <b>don't reinvent the wheel</b> — a company cares whether your app works well, not how hard you worked to hand-build every piece.</p>
+
+      <h4>Why Python specifically won data science</h4>
+      <ol>
+        <li><b>Easy to learn</b> — early data science was done by mathematicians/statisticians, not professional programmers. Java/C++ were too steep to pick up quickly, so Python won.</li>
+        <li><b>Proximity with math</b> — Python already had scientific-computing libraries (NumPy, SciPy) before the data-science boom.</li>
+        <li><b>Snowball effect</b> — more users → more libraries (Pandas, TensorFlow, Keras…) → bigger ecosystem → harder for other languages to catch up.</li>
+      </ol>
+
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ "But Python is slow…"</div>
+        True — but the workaround is libraries like NumPy, whose array type is actually implemented in <b>C</b> underneath. You write Python syntax; the heavy lifting underneath runs at C speed. That's why ML-heavy code stays fast despite Python's reputation.
+      </div>
+
+      <div class="callout interview">
+        <div class="cal-head">◆ Python vs R, compiled vs interpreted</div>
+        <b>Python vs R:</b> R is strong in academia (stats, plotting); Python is the better general-purpose, industry choice. Aiming for an industry job → Python. Planning a Masters/PhD → you'll likely need R too, since most researchers use it.<br/><br/>
+        <b>Compiled vs interpreted:</b> compiled languages (Java, C) convert the whole program to machine code at once and tend to be faster; interpreted/scripting languages (Python, JS, PHP) run line by line and tend to be slower.
+      </div>
+    </div>
+  </details>
+
+  <!-- 2 -->
+  <details class="section" id="s2" open>
+    <summary><span class="s-num">02</span><span class="s-title">Python Output — print()</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p><span class="tag concept">Core idea</span> If you see <code>word()</code> — a name followed by round brackets — that's your visual cue it's a <b>function</b>: you feed input inside the brackets and get output back.</p>
+      <ul>
+        <li>Python is <b>case-sensitive</b> — always <code>print</code>, never <code>Print</code>.</li>
+        <li>Text needs quotes. <code>print(Salman Khan)</code> errors because Python can't tell if that's a variable or plain text — quotes are how you say "this is a string".</li>
+        <li>Any data type can be printed, and multiple values can be printed at once, comma-separated.</li>
+      </ul>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print('Hello World')
+print('salman khan')
+# print(salman khan)     -> SyntaxError: no quotes = not valid text
+print(7)
+print(7.7)
+print(True)
+print('Hello', 1, 4.5, True)">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="str">'Hello World'</span>)
+<span class="kw">print</span>(<span class="str">'salman khan'</span>)
+<span class="cm"># print(salman khan)     -> SyntaxError: no quotes = not valid text</span>
+<span class="kw">print</span>(<span class="num">7</span>)
+<span class="kw">print</span>(<span class="num">7.7</span>)
+<span class="kw">print</span>(<span class="kw">True</span>)
+<span class="kw">print</span>(<span class="str">'Hello'</span>, <span class="num">1</span>, <span class="num">4.5</span>, <span class="kw">True</span>)</pre>
+      </div>
+      <div class="out">Hello World<br/>salman khan<br/>7<br/>7.7<br/>True<br/>Hello 1 4.5 True</div>
+
+      <h4><code>sep</code> — what goes between multiple items</h4>
+      <p>Default separator between comma-separated items is a space. Override it with <code>sep</code>.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print('Hello', 1, 4.5, True, sep='/')">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="str">'Hello'</span>, <span class="num">1</span>, <span class="num">4.5</span>, <span class="kw">True</span>, sep=<span class="str">'/'</span>)</pre>
+      </div>
+      <div class="out">Hello/1/4.5/True</div>
+
+      <h4><code>end</code> — whether output moves to a new line</h4>
+      <p>Default value of <code>end</code> is <code>\n</code> (newline) — that's why two separate <code>print()</code> calls land on separate lines. Override it to change that.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print('hello')
+print('world')
+# hello
+# world
+
+print('hello', end='-')
+print('world')
+# hello-world">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="str">'hello'</span>)
+<span class="kw">print</span>(<span class="str">'world'</span>)
+<span class="cm"># hello</span>
+<span class="cm"># world</span>
+
+<span class="kw">print</span>(<span class="str">'hello'</span>, end=<span class="str">'-'</span>)
+<span class="kw">print</span>(<span class="str">'world'</span>)
+<span class="cm"># hello-world</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember — the 4-step recap</div>
+        1) Print any data type. 2) Print multiple things at once with commas. 3) Control what goes <i>between</i> them with <code>sep</code>. 4) Control the line break after with <code>end</code>.
+      </div>
+    </div>
+  </details>
+
+  <!-- 3 -->
+  <details class="section" id="s3" open>
+    <summary><span class="s-num">03</span><span class="s-title">Data Types</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>"How many types of data can this language work with?" — a first look at each, from the actual notebook.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(8)              # int
+print(1e309)          # inf -> floats overflow past ~1.7e308, ints practically don't
+
+print(8.55)           # float
+print(1.7e309)        # inf
+
+print(True)           # bool
+print(False)
+
+print('Hello World')  # str
+
+print(5+6j)           # complex
+
+print([1,2,3,4,5])                              # list
+print((1,2,3,4,5))                              # tuple
+print({1,2,3,4,5})                              # set
+print({'name':'Nitish','gender':'Male','weight':70})  # dict
+
+type([1,2,3])         # list">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="num">8</span>)              <span class="cm"># int</span>
+<span class="kw">print</span>(<span class="num">1e309</span>)          <span class="cm"># inf -> floats overflow past ~1.7e308, ints practically don't</span>
+
+<span class="kw">print</span>(<span class="num">8.55</span>)           <span class="cm"># float</span>
+<span class="kw">print</span>(<span class="num">1.7e309</span>)        <span class="cm"># inf</span>
+
+<span class="kw">print</span>(<span class="kw">True</span>)           <span class="cm"># bool</span>
+<span class="kw">print</span>(<span class="kw">False</span>)
+
+<span class="kw">print</span>(<span class="str">'Hello World'</span>)  <span class="cm"># str</span>
+
+<span class="kw">print</span>(<span class="num">5</span>+<span class="num">6</span>j)           <span class="cm"># complex</span>
+
+<span class="kw">print</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>])                              <span class="cm"># list</span>
+<span class="kw">print</span>((<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>))                              <span class="cm"># tuple</span>
+<span class="kw">print</span>({<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>})                              <span class="cm"># set</span>
+<span class="kw">print</span>({<span class="str">'name'</span>:<span class="str">'Nitish'</span>,<span class="str">'gender'</span>:<span class="str">'Male'</span>,<span class="str">'weight'</span>:<span class="num">70</span>})  <span class="cm"># dict</span>
+
+<span class="kw">type</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])         <span class="cm"># list</span></pre>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Type</th><th>Syntax</th><th>Notes</th></tr>
+          <tr><td>int</td><td><code>8</code></td><td>Python handles very large integers natively — no practical size worry at this level.</td></tr>
+          <tr><td>float</td><td><code>8.55</code></td><td>Has a real magnitude limit — beyond ~<code>1.7e308</code> it overflows to <code>inf</code>.</td></tr>
+          <tr><td>bool</td><td><code>True</code> / <code>False</code></td><td><b>Not</b> text — never quote them.</td></tr>
+          <tr><td>str</td><td><code>'Hello World'</code></td><td>Text data.</td></tr>
+          <tr><td>complex</td><td><code>5+6j</code></td><td>Real + imaginary part, from math class.</td></tr>
+          <tr><td>list</td><td><code>[1,2,3,4,5]</code></td><td>Like C's "array", but more flexible (see the Lists deep-dive notes).</td></tr>
+          <tr><td>tuple</td><td><code>(1,2,3,4,5)</code></td><td>"List's sibling" — looks the same, round brackets. Details later.</td></tr>
+          <tr><td>set</td><td><code>{1,2,3,4,5}</code></td><td>Same idea as mathematical sets (union, difference…).</td></tr>
+          <tr><td>dict</td><td><code>{'name':'Nitish', ...}</code></td><td>Key-value pairs — you'll use this a LOT going forward.</td></tr>
+        </table>
+      </div>
+      <p><code>type(x)</code> tells you the data type of anything — you'll reach for this constantly.</p>
+      <div class="callout interview">
+        <div class="cal-head">◆ Good-to-know clarifications</div>
+        <b>No separate "double"</b>: Java/C's <code>long</code> and <code>double</code> both just map to Python's single <code>int</code> / <code>float</code>.<br/>
+        <b>Data type vs. data structure</b>: don't overthink the boundary — both are "a way of holding data."<br/>
+        <b>pandas Series/DataFrame</b> are user-defined (class-based) types — they'll make more sense once OOP is taught.
+      </div>
+    </div>
+  </details>
+
+  <!-- 4 -->
+  <details class="section" id="s4" open>
+    <summary><span class="s-num">04</span><span class="s-title">Variables</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="quote">"A variable is used wherever, at the time of writing the program, you don't know what value will go there in the future."</div>
+      <p>Example: a website prints "Hello, [username]" — you don't know in advance if it'll be Rahul, Rohit or Ankita, so a variable holds the slot that gets filled at runtime.</p>
+
+      <h4>Python vs C/C++</h4>
+      <p>C requires a type upfront: <code>int name = 5;</code>. Python just takes the value directly — <code>name = 'nitish'</code> — and figures out the type itself.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="name = 'nitish'
+print(name)
+
+a = 5
+b = 6
+print(a + b)          # 11">Copy</button>
+        <pre class="code">name = <span class="str">'nitish'</span>
+<span class="kw">print</span>(name)
+
+a = <span class="num">5</span>
+b = <span class="num">6</span>
+<span class="kw">print</span>(a + b)          <span class="cm"># 11</span></pre>
+      </div>
+
+      <div class="callout interview">
+        <div class="cal-head">◆ Interview question — dynamic typing</div>
+        <b>Dynamic typing</b>: you never declare a variable's type — Python's interpreter infers it from the value (<code>5</code>→int, <code>5.5</code>→float, <code>'Nitish'</code>→str) automatically.<br/>
+        <b>Static typing</b> (the contrast): C, Java, C++ require the type to be declared up front.
+      </div>
+
+      <div class="callout interview">
+        <div class="cal-head">◆ Interview question — dynamic binding</div>
+        <b>Static binding</b> (C/C++/Java): once a variable's type is fixed, it can only ever hold that type for the rest of the program.<br/>
+        <b>Dynamic binding</b> (Python): the same variable name can hold an int now and a string later — there's no permanent attachment between a name and a type. (Some Java-background programmers dislike this — less type safety.)
+      </div>
+
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a = 5
+print(a)
+a = 'nitish'      # same variable, now a completely different type
+print(a)">Copy</button>
+        <pre class="code">a = <span class="num">5</span>
+<span class="kw">print</span>(a)
+a = <span class="str">'nitish'</span>      <span class="cm"># same variable, now a completely different type</span>
+<span class="kw">print</span>(a)</pre>
+      </div>
+
+      <h4>Multiple assignment styles</h4>
+      <p>Recognize these in other people's code, even if you don't always use them:</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a = 1
+b = 2
+c = 3
+print(a, b, c)          # standard
+
+a, b, c = 1, 2, 3
+print(a, b, c)          # compressed — multiple vars, one line
+
+a = b = c = 5
+print(a, b, c)          # same value into all three at once">Copy</button>
+        <pre class="code">a = <span class="num">1</span>
+b = <span class="num">2</span>
+c = <span class="num">3</span>
+<span class="kw">print</span>(a, b, c)          <span class="cm"># standard</span>
+
+a, b, c = <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>
+<span class="kw">print</span>(a, b, c)          <span class="cm"># compressed — multiple vars, one line</span>
+
+a = b = c = <span class="num">5</span>
+<span class="kw">print</span>(a, b, c)          <span class="cm"># same value into all three at once</span></pre>
+      </div>
+      <div class="out">1 2 3<br/>1 2 3<br/>5 5 5</div>
+    </div>
+  </details>
+
+  <!-- 5 -->
+  <details class="section" id="s5" open>
+    <summary><span class="s-num">05</span><span class="s-title">Comments</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>A comment is a line the interpreter <b>ignores completely</b> — pure documentation for humans. Syntax: <code>#</code> followed by text.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# this is a comment
+# second line
+a = 4
+b = 6   # like this
+# second comment
+print(a+b)">Copy</button>
+        <pre class="code"><span class="cm"># this is a comment</span>
+<span class="cm"># second line</span>
+a = <span class="num">4</span>
+b = <span class="num">6</span>   <span class="cm"># like this</span>
+<span class="cm"># second comment</span>
+<span class="kw">print</span>(a+b)</pre>
+      </div>
+      <div class="out">10</div>
+      <ul>
+        <li>Python has <b>no native multi-line comment</b> — every line needs its own <code>#</code>. Editor "tricks" for pseudo multi-line comments exist, but real companies don't write code that way — skip them.</li>
+        <li>Comment placement: above the line (instructor's own preference, and what most companies do) or beside it — both fine.</li>
+      </ul>
+      <div class="callout story">
+        <div class="cal-head">✎ The batsman analogy — why comments matter</div>
+        "A person who doesn't write comments but writes very good code is like a batsman who can hit a six off every ball but runs out his own batting partner." Build the comment-writing habit now — it's what makes you usable on a team later, not just a strong solo coder.
+      </div>
+    </div>
+  </details>
+
+  <!-- 6 -->
+  <details class="section" id="s6" open>
+    <summary><span class="s-num">06</span><span class="s-title">Keywords &amp; Identifiers</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <h4>Why keywords exist — the compilation chain</h4>
+      <p>You write code in English-like <b>high-level language</b> so any teammate can read it. But the machine only understands binary (1s and 0s). Converting your English-like code into binary is <b>compilation</b> — done by a <b>compiler</b> (Java, C, C++ — whole program at once) or an <b>interpreter</b> (Python, PHP — line by line).</p>
+      <p>The interpreter needs specific "signal words" to understand your intent — <code>print</code> tells it you want output, <code>if</code>/<code>else</code> tells it you want branching. These reserved signal words are <b>keywords</b>.</p>
+      <div class="quote">"These ~32 words are like the interpreter saying to you with folded hands: 'these are reserved just for me — please don't use them as variable names, or there'll be confusion.'"</div>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember</div>
+        Python has roughly 32–33 keywords (e.g. <code>True</code>, <code>False</code>, <code>if</code>, <code>else</code>…). <b>No need to memorize the list</b> — just know they exist, so you never accidentally name a variable <code>print</code> or <code>if</code> and get a confusing crash. You also can't invent your own new keywords.
+      </div>
+
+      <h4>Identifiers — naming rules</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# You can't start with a digit
+name1 = 'Nitish'
+print(name1)
+
+# You can use special chars -> _
+_ = 'ntiish'
+print(_)
+
+# identifiers can not be a keyword">Copy</button>
+        <pre class="code"><span class="cm"># You can't start with a digit</span>
+name1 = <span class="str">'Nitish'</span>
+<span class="kw">print</span>(name1)
+
+<span class="cm"># You can use special chars -> _</span>
+_ = <span class="str">'ntiish'</span>
+<span class="kw">print</span>(_)
+
+<span class="cm"># identifiers can not be a keyword</span></pre>
+      </div>
+      <div class="out">Nitish<br/>ntiish</div>
+      <ul>
+        <li>Can't start with a digit (<code>1name</code> is invalid, <code>name1</code> is fine).</li>
+        <li>Underscore <code>_</code> is allowed, including as a name on its own.</li>
+        <li>Can't be one of the reserved keywords.</li>
+      </ul>
+    </div>
+  </details>
+
+  <!-- 7 -->
+  <details class="section" id="s7" open>
+    <summary><span class="s-num">07</span><span class="s-title">User Input</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="callout story">
+        <div class="cal-head">✎ Static vs. dynamic software</div>
+        <b>Static software</b> just displays information — a calendar showing dates, no interaction. <b>Dynamic software</b> talks with the user — YouTube (search, comment), Ola (destination), Zomato (order). "99% of software today is dynamic," and that starts with knowing how to take input.
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="input('Enter Email')">Copy</button>
+        <pre class="code">input(<span class="str">'Enter Email'</span>)</pre>
+      </div>
+      <div class="out">Enter Email<span style="opacity:.6"> [user types: nitish@gmail.com]</span><br/><b>'nitish@gmail.com'</b></div>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember</div>
+        Calling <code>input()</code> with nothing inside shows a blank box — the user has no idea what to type. Always pass a prompt string: <code>input('Enter your name: ')</code>. "As a programmer, it's your responsibility to always tell the user what they need to do."
+      </div>
+    </div>
+  </details>
+
+  <!-- 8 -->
+  <details class="section" id="s8" open>
+    <summary><span class="s-num">08</span><span class="s-title">Type Conversion — the input() bug that teaches it</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="callout remember">
+        <div class="cal-head">★ Habit worth building</div>
+        "Programming happens first in your mind, then on the keyboard." Comment out the plan first (<code>#take input</code>, <code>#add</code>, <code>#print result</code>), then fill in code under each line.
+      </div>
+
+      <h4>The bug</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="fnum = int(input('enter first number'))
+snum = int(input('enter second number'))
+#print(type(fnum),type(snum))
+result = fnum + snum
+print(result)
+print(type(fnum))">Copy</button>
+        <pre class="code">fnum = <span class="kw">int</span>(input(<span class="str">'enter first number'</span>))
+snum = <span class="kw">int</span>(input(<span class="str">'enter second number'</span>))
+<span class="cm">#print(type(fnum),type(snum))</span>
+result = fnum + snum
+<span class="kw">print</span>(result)
+<span class="kw">print</span>(<span class="kw">type</span>(fnum))</pre>
+      </div>
+      <div class="out">enter first number <span style="opacity:.6">56</span><br/>enter second number <span style="opacity:.6">67</span><br/><b>123</b><br/>&lt;class 'int'&gt;</div>
+      <p>Before wrapping with <code>int()</code>, feeding in 56 and 67 gave <code>5667</code> — Python was doing <b>string concatenation</b>, not addition, because <code>input()</code> always returns type <code>str</code>.</p>
+      <div class="callout interview">
+        <div class="cal-head">◆ Why does input() always return a string?</div>
+        Because string is the <b>universal format</b> — any value can be represented as a string (the number 4 as <code>"4"</code>), but not every string can become another type (<code>"Kolkata"</code> can't become an int). Since <code>input()</code> could receive anything, Python plays it safe and always stores it as <code>str</code>.
+      </div>
+
+      <h4>Implicit vs. Explicit conversion</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(5 + 5.6)              # 10.6  -> implicit: int+float, Python does it automatically
+print(type(5), type(5.6))  # <class 'int'> <class 'float'>
+
+print(4 + '4')              # TypeError! Python won't guess int + str
+
+str(5)                      # explicit: int -> str
+float(4)                    # explicit: int -> float  -> 4.0">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="num">5</span> + <span class="num">5.6</span>)              <span class="cm"># 10.6  -> implicit: int+float, Python does it automatically</span>
+<span class="kw">print</span>(<span class="kw">type</span>(<span class="num">5</span>), <span class="kw">type</span>(<span class="num">5.6</span>))  <span class="cm"># &lt;class 'int'&gt; &lt;class 'float'&gt;</span>
+
+<span class="kw">print</span>(<span class="num">4</span> + <span class="str">'4'</span>)              <span class="cm"># TypeError! Python won't guess int + str</span>
+
+<span class="kw">str</span>(<span class="num">5</span>)                      <span class="cm"># explicit: int -> str</span>
+<span class="kw">float</span>(<span class="num">4</span>)                    <span class="cm"># explicit: int -> float  -> 4.0</span></pre>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Kind</th><th>Who does it</th><th>Example</th></tr>
+          <tr><td>Implicit</td><td>Python, automatically</td><td><code>5 + 5.6</code> → <code>10.6</code></td></tr>
+          <tr><td>Explicit</td><td>You, with a function</td><td><code>int('4')</code>, <code>str(5)</code>, <code>float(4)</code></td></tr>
+        </table>
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Conversion isn't always allowed</div>
+        You can't convert a complex number like <code>4+5j</code> to <code>int</code> — it would mean discarding the imaginary part, i.e. <b>losing information</b>, which Python won't silently do. Rule of thumb: conversion only happens when nothing meaningful is lost.
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ MCQ trap — conversion doesn't mutate the original</div>
+        <code>int(fnum)</code> used inside an expression does <b>not</b> permanently change <code>fnum</code> — it creates a brand-new value used only in that expression. <code>fnum</code> stays whatever it was unless you explicitly reassign: <code>fnum = int(fnum)</code>. Doing the conversion right at input time (<code>fnum = int(input(...))</code>) is the cleaner, more permanent approach — flagged as a common source of confusing 4-option exam questions.
+      </div>
+    </div>
+  </details>
+
+  <!-- 9 -->
+  <details class="section" id="s9" open>
+    <summary><span class="s-num">09</span><span class="s-title">Literals</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>A variable is a <b>container</b>; a literal is the <b>raw value</b> you put inside it — in <code>a = 2</code>, the <code>2</code> is the literal.</p>
+
+      <h4>Numeric literals — different notations</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a = 0b1010     # Binary Literal
+b = 100        # Decimal Literal
+c = 0o310      # Octal Literal
+d = 0x12c      # Hexadecimal Literal
+
+float_1 = 10.5
+float_2 = 1.5e2     # 1.5 * 10^2
+float_3 = 1.5e-3    # 1.5 * 10^-3
+
+x = 3.14j            # Complex Literal
+print(a, b, c, d)
+print(float_1, float_2, float_3)
+print(x, x.imag, x.real)">Copy</button>
+        <pre class="code">a = <span class="num">0b1010</span>     <span class="cm"># Binary Literal</span>
+b = <span class="num">100</span>        <span class="cm"># Decimal Literal</span>
+c = <span class="num">0o310</span>      <span class="cm"># Octal Literal</span>
+d = <span class="num">0x12c</span>      <span class="cm"># Hexadecimal Literal</span>
+
+float_1 = <span class="num">10.5</span>
+float_2 = <span class="num">1.5e2</span>     <span class="cm"># 1.5 * 10^2</span>
+float_3 = <span class="num">1.5e-3</span>    <span class="cm"># 1.5 * 10^-3</span>
+
+x = <span class="num">3.14</span>j            <span class="cm"># Complex Literal</span>
+<span class="kw">print</span>(a, b, c, d)
+<span class="kw">print</span>(float_1, float_2, float_3)
+<span class="kw">print</span>(x, x.imag, x.real)</pre>
+      </div>
+      <div class="callout story">
+        <div class="cal-head">✎ Where binary literals actually get used</div>
+        The instructor's own background is robotics — <code>0b</code> binary notation shows up there for port/hardware programming. "In normal (everyday) programming you probably won't need this."
+      </div>
+
+      <h4>String literals — five forms</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="string = 'This is Python'
+strings = &quot;This is Python&quot;
+char = &quot;C&quot;
+multiline_str = &quot;&quot;&quot;This is a multiline string with more than one line code.&quot;&quot;&quot;
+unicode = u&quot;\U0001f600\U0001F606\U0001F923&quot;
+raw_str = r&quot;raw \n string&quot;
+
+print(string)
+print(strings)
+print(char)
+print(multiline_str)
+print(unicode)
+print(raw_str)">Copy</button>
+        <pre class="code">string = <span class="str">'This is Python'</span>
+strings = <span class="str">"This is Python"</span>
+char = <span class="str">"C"</span>
+multiline_str = <span class="str">"""This is a multiline string with more than one line code."""</span>
+unicode = u<span class="str">"\U0001f600\U0001F606\U0001F923"</span>
+raw_str = r<span class="str">"raw \n string"</span>
+
+<span class="kw">print</span>(string)
+<span class="kw">print</span>(strings)
+<span class="kw">print</span>(char)
+<span class="kw">print</span>(multiline_str)
+<span class="kw">print</span>(unicode)
+<span class="kw">print</span>(raw_str)</pre>
+      </div>
+      <div class="out">This is Python<br/>This is Python<br/>C<br/>This is a multiline string with more than one line code.<br/>😀😆🤣<br/>raw \n string</div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Form</th><th>Syntax</th><th>When</th></tr>
+          <tr><td>Single-quoted</td><td><code>'...'</code></td><td>Everyday strings</td></tr>
+          <tr><td>Double-quoted</td><td><code>"..."</code></td><td>Everyday strings</td></tr>
+          <tr><td>Triple-quoted</td><td><code>"""..."""</code></td><td>Multi-line strings</td></tr>
+          <tr><td>Unicode</td><td><code>u"\U0001f600"</code></td><td>Emojis / special symbols text alone can't cover</td></tr>
+          <tr><td>Raw</td><td><code>r"raw \n string"</code></td><td>Escape sequences like <code>\n</code> printed literally, not interpreted</td></tr>
+        </table>
+      </div>
+
+      <h4>Boolean literals — internally just numbers</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a = True + 4
+b = False + 10
+print('a:', a)     # 5
+print('b:', b)     # 10">Copy</button>
+        <pre class="code">a = <span class="kw">True</span> + <span class="num">4</span>
+b = <span class="kw">False</span> + <span class="num">10</span>
+<span class="kw">print</span>(<span class="str">'a:'</span>, a)     <span class="cm"># 5</span>
+<span class="kw">print</span>(<span class="str">'b:'</span>, b)     <span class="cm"># 10</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember — MCQ trap</div>
+        Internally, Python treats <code>True</code> as <code>1</code> and <code>False</code> as <code>0</code> — so they participate directly in math (<code>True + 4 == 5</code>). Don't get confused if a snippet mixes booleans into arithmetic.
+      </div>
+
+      <h4>The <code>None</code> literal</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="k = None
+a = 5
+b = 6
+print('Program exe')">Copy</button>
+        <pre class="code">k = <span class="kw">None</span>
+a = <span class="num">5</span>
+b = <span class="num">6</span>
+<span class="kw">print</span>(<span class="str">'Program exe'</span>)</pre>
+      </div>
+      <p>Unlike some languages, Python won't let you pre-declare a variable with no value at all — writing a bare name with nothing assigned throws an error. <code>None</code> is the placeholder that says "I need this variable, I just don't know its value yet" — handy when sketching out an ML algorithm's variables before you've decided what goes in each.</p>
+    </div>
+  </details>
+
+  <!-- 10 Cheat sheet -->
+  <details class="section" id="s10" open>
+    <summary><span class="s-num">★</span><span class="s-title">60-Second Cheat Sheet</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="cheat-grid">
+        <div class="cheat-card"><h5>Why Python</h5><p>Batteries included, easy to learn, huge ecosystem — a bit slow, but NumPy-style libraries run C underneath</p></div>
+        <div class="cheat-card"><h5>print()</h5><p><code>sep</code> = between items (default space) · <code>end</code> = after call (default <code>\n</code>)</p></div>
+        <div class="cheat-card"><h5>9 core types</h5><p>int, float, bool, str, complex, list, tuple, set, dict</p></div>
+        <div class="cheat-card"><h5>Dynamic typing</h5><p>No type declared — Python infers it from the value</p></div>
+        <div class="cheat-card"><h5>Dynamic binding</h5><p>Same variable name can hold different types over time</p></div>
+        <div class="cheat-card"><h5>Comments</h5><p><code>#</code> per line — no native multi-line form</p></div>
+        <div class="cheat-card"><h5>Keywords</h5><p>~32 reserved words — never use as variable names</p></div>
+        <div class="cheat-card"><h5>input()</h5><p>Always returns <code>str</code> — wrap with <code>int()</code>/<code>float()</code> as needed</p></div>
+        <div class="cheat-card"><h5>Type conversion</h5><p>Implicit = automatic · Explicit = <code>int()</code>/<code>str()</code>/<code>float()</code> · never mutates the original</p></div>
+        <div class="cheat-card"><h5>Booleans</h5><p><code>True</code>=1, <code>False</code>=0 in arithmetic</p></div>
+        <div class="cheat-card"><h5>None</h5><p>Placeholder for "no value yet" — Python won't let you declare empty</p></div>
+        <div class="cheat-card"><h5>Next class</h5><p>Operators, If-Else, Loops</p></div>
+      </div>
+    </div>
+  </details>
+
+  <footer>Built from the CampusX Session 1 transcript + class notebook · keep this open while you revise</footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.getAttribute('data-copy') || '';
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(function(){ btn.textContent = old; }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){
+          fallbackCopy(text); done();
+        });
+      } else {
+        fallbackCopy(text); done();
+      }
+    });
+  });
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  }
+</script>
