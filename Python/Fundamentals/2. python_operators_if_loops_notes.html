@@ -1,0 +1,848 @@
+<title>Operators, If-Else &amp; Loops</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg:#F4F6F5; --surface:#FFFFFF; --surface-2:#ECF1EE;
+    --ink:#16241F; --ink-soft:#4B5D57; --border:#D7E0DB;
+    --accent:#0E7C66; --accent-soft:#DCEFE8;
+    --accent-2:#C67F0E; --accent-2-soft:#FBEBD2;
+    --danger:#B8453A; --danger-soft:#F8E3DF;
+    --interview:#5551C9; --interview-soft:#E7E7FA;
+    --code-bg:#12201B; --code-ink:#BEF6DC; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#6E8079; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(20,40,35,.07), 0 10px 28px rgba(20,40,35,.08);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+      --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+      --accent:#3FCFA3; --accent-soft:#153228;
+      --accent-2:#F0B84D; --accent-2-soft:#33291A;
+      --danger:#E28074; --danger-soft:#3A211E;
+      --interview:#ABABF7; --interview-soft:#231F3D;
+      --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+    --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+    --accent:#3FCFA3; --accent-soft:#153228;
+    --accent-2:#F0B84D; --accent-2-soft:#33291A;
+    --danger:#E28074; --danger-soft:#3A211E;
+    --interview:#ABABF7; --interview-soft:#231F3D;
+    --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Work Sans', system-ui, sans-serif;
+    padding-inline:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Fraunces', Georgia, serif; text-wrap:balance; margin:0; }
+  a{ color:var(--accent); }
+  .wrap{ max-width:760px; margin:0 auto; padding-block:28px 80px; }
+
+  .hero{
+    background:linear-gradient(155deg, var(--surface) 0%, var(--surface-2) 100%);
+    border:1px solid var(--border); border-radius:20px;
+    padding:28px 26px; box-shadow:var(--shadow); margin-bottom:18px;
+    position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+    background:var(--accent-soft); border-radius:50%; opacity:.7; z-index:0;
+  }
+  .hero-inner{ position:relative; z-index:1; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-soft);
+    padding:5px 11px; border-radius:100px; margin-bottom:12px;
+  }
+  .hero h1{ font-size:clamp(26px,6vw,38px); font-weight:700; line-height:1.08; }
+  .hero p.sub{ margin:10px 0 0; color:var(--ink-soft); font-size:15.5px; max-width:52ch; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .meta-chip{
+    font-size:12.5px; font-weight:600; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:5px 10px; font-family:'JetBrains Mono',monospace;
+  }
+
+  .toc{
+    display:flex; gap:8px; overflow-x:auto; padding:4px 2px 14px;
+    margin-bottom:6px; scrollbar-width:thin;
+  }
+  .toc a{
+    flex:0 0 auto; text-decoration:none; font-size:13px; font-weight:600;
+    color:var(--ink-soft); background:var(--surface); border:1px solid var(--border);
+    padding:7px 13px; border-radius:100px; white-space:nowrap;
+  }
+  .toc a span{ color:var(--accent); font-family:'JetBrains Mono',monospace; margin-right:5px; }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 22px; }
+  .tag{
+    font-size:11.5px; font-weight:700; letter-spacing:.02em;
+    padding:4px 10px; border-radius:7px; display:inline-flex; align-items:center; gap:5px;
+  }
+  .tag.remember{ background:var(--accent-2-soft); color:var(--accent-2); }
+  .tag.gotcha{ background:var(--danger-soft); color:var(--danger); }
+  .tag.interview{ background:var(--interview-soft); color:var(--interview); }
+  .tag.concept{ background:var(--accent-soft); color:var(--accent); }
+  .tag.story{ background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--border); }
+
+  details.section{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    margin-bottom:14px; box-shadow:var(--shadow); overflow:hidden;
+  }
+  details.section > summary{
+    list-style:none; cursor:pointer; padding:18px 20px;
+    display:flex; align-items:center; gap:13px; user-select:none;
+  }
+  details.section > summary::-webkit-details-marker{ display:none; }
+  .s-num{
+    flex:0 0 auto; width:34px; height:34px; border-radius:10px;
+    background:var(--accent-soft); color:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13.5px;
+  }
+  .s-title{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; flex:1 1 auto; }
+  .chev{ color:var(--ink-soft); transition:transform .2s ease; flex:0 0 auto; }
+  details[open] > summary .chev{ transform:rotate(90deg); }
+  .s-body{ padding:0 20px 22px; }
+  .s-body > *:first-child{ margin-top:0; }
+  .s-body p{ line-height:1.65; color:var(--ink); font-size:15px; margin:0 0 12px; }
+  .s-body h4{ font-family:'Work Sans',sans-serif; font-size:14.5px; font-weight:700; margin:18px 0 8px; color:var(--ink); }
+  .s-body ul, .s-body ol{ margin:0 0 12px; padding-left:22px; line-height:1.65; font-size:15px; }
+  .s-body li{ margin-bottom:5px; }
+  .quote{
+    font-family:'Fraunces',serif; font-style:italic; font-size:15.5px;
+    color:var(--ink-soft); border-left:3px solid var(--accent);
+    padding:2px 0 2px 14px; margin:12px 0;
+  }
+
+  .callout{
+    border-radius:12px; padding:13px 15px; margin:14px 0; font-size:14.5px; line-height:1.6;
+    border:1px solid transparent;
+  }
+  .callout .cal-head{ font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; display:flex; align-items:center; gap:6px; }
+  .callout.remember{ background:var(--accent-2-soft); color:var(--ink); border-color:color-mix(in srgb, var(--accent-2) 30%, transparent); }
+  .callout.remember .cal-head{ color:var(--accent-2); }
+  .callout.gotcha{ background:var(--danger-soft); color:var(--ink); border-color:color-mix(in srgb, var(--danger) 30%, transparent); }
+  .callout.gotcha .cal-head{ color:var(--danger); }
+  .callout.interview{ background:var(--interview-soft); color:var(--ink); border-color:color-mix(in srgb, var(--interview) 30%, transparent); }
+  .callout.interview .cal-head{ color:var(--interview); }
+  .callout.story{ background:var(--surface-2); color:var(--ink); border-color:var(--border); }
+  .callout.story .cal-head{ color:var(--ink-soft); }
+
+  .code-wrap{ position:relative; margin:12px 0; border-radius:12px; overflow:hidden; box-shadow:var(--shadow); }
+  pre.code{
+    background:var(--code-bg); color:var(--code-ink); margin:0; padding:14px 44px 14px 16px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6;
+    overflow-x:auto; white-space:pre;
+  }
+  pre.code .kw{ color:var(--code-kw); }
+  pre.code .str{ color:var(--code-str); }
+  pre.code .cm{ color:var(--code-cm); }
+  pre.code .num{ color:var(--code-num); }
+  .copy-btn{
+    position:absolute; top:8px; right:8px; background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18); color:#cfe9df; border-radius:7px;
+    font-family:'Work Sans',sans-serif; font-size:11px; font-weight:600;
+    padding:5px 9px; cursor:pointer;
+  }
+  .copy-btn:hover{ background:rgba(255,255,255,.16); }
+  .out{
+    background:var(--surface-2); border:1px dashed var(--border); border-radius:10px;
+    padding:9px 13px; font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    color:var(--ink-soft); margin:-4px 0 12px;
+  }
+  .out b{ color:var(--ink); font-weight:600; }
+
+  .tbl-wrap{ overflow-x:auto; margin:14px 0; border-radius:12px; border:1px solid var(--border); }
+  table{ border-collapse:collapse; width:100%; font-size:13.5px; min-width:460px; }
+  th{
+    background:var(--surface-2); text-align:left; padding:9px 12px; font-weight:700;
+    color:var(--ink); border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  td{ padding:9px 12px; border-bottom:1px solid var(--border); color:var(--ink); vertical-align:top; }
+  tr:last-child td{ border-bottom:none; }
+  td code, li code, p code{
+    font-family:'JetBrains Mono',monospace; background:var(--surface-2); padding:1px 6px;
+    border-radius:5px; font-size:.92em; color:var(--accent);
+  }
+
+  .bit-row{ display:flex; gap:6px; align-items:center; font-family:'JetBrains Mono',monospace; font-size:14px; margin:6px 0; flex-wrap:wrap; }
+  .bit{ display:inline-flex; width:26px; height:26px; align-items:center; justify-content:center; border-radius:6px; background:var(--surface-2); border:1px solid var(--border); }
+  .bit.on{ background:var(--accent-soft); color:var(--accent); border-color:var(--accent); font-weight:700; }
+
+  .cheat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin:14px 0; }
+  .cheat-card{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:13px 14px;
+  }
+  .cheat-card h5{ margin:0 0 6px; font-size:13px; font-family:'JetBrains Mono',monospace; color:var(--accent); font-weight:700; }
+  .cheat-card p{ margin:0; font-size:13px; color:var(--ink-soft); line-height:1.55; }
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:12.5px; margin-top:26px; }
+
+  @media (max-width:480px){
+    .s-title{ font-size:17px; }
+    .hero h1{ font-size:24px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">● CampusX &nbsp;·&nbsp; Data Science Mentorship &nbsp;·&nbsp; Session 2</span>
+      <h1>Operators, If-Else &amp; Loops</h1>
+      <p class="sub">Complete revision notes — all six operator families, branching with proper indentation, modules, and both loop types with the while-else trick most languages don't have.</p>
+      <div class="meta-row">
+        <span class="meta-chip">14 sections</span>
+        <span class="meta-chip">nested loops + break/continue/pass deferred to next class</span>
+        <span class="meta-chip">source: transcript + class notebook</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="tag remember">★ Remember</span>
+    <span class="tag gotcha">⚠ Gotcha</span>
+    <span class="tag interview">◆ Interview</span>
+    <span class="tag concept">● Core idea</span>
+    <span class="tag story">✎ Analogy</span>
+  </div>
+
+  <nav class="toc" aria-label="Table of contents">
+    <a href="#s1"><span>01</span>Arithmetic</a>
+    <a href="#s2"><span>02</span>Relational</a>
+    <a href="#s3"><span>03</span>Logical</a>
+    <a href="#s4"><span>04</span>Bitwise</a>
+    <a href="#s5"><span>05</span>Assignment</a>
+    <a href="#s6"><span>06</span>Membership</a>
+    <a href="#s7"><span>07</span>Digit-Sum Program</a>
+    <a href="#s8"><span>08</span>If-Else</a>
+    <a href="#s9"><span>09</span>Min of 3 / Menu Program</a>
+    <a href="#s10"><span>10</span>Modules</a>
+    <a href="#s11"><span>11</span>While Loop</a>
+    <a href="#s12"><span>12</span>For Loop</a>
+    <a href="#s13"><span>◆</span>Deferred Topics</a>
+    <a href="#s14"><span>★</span>Cheat Sheet</a>
+  </nav>
+
+  <!-- 1 -->
+  <details class="section" id="s1" open>
+    <summary><span class="s-num">01</span><span class="s-title">Arithmetic Operators</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p><span class="tag concept">Core idea</span> An operator is what you use to perform an operation on two operands — add two numbers, compare two values, and so on. Python groups operators into six families: Arithmetic, Relational, Logical, Bitwise, Assignment, Membership.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(5+6)     # 11
+print(5-6)     # -1
+print(5*6)     # 30
+print(5/2)     # 2.5
+print(5//2)    # 2
+print(5%2)     # 1
+print(5**2)    # 25">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="num">5</span>+<span class="num">6</span>)     <span class="cm"># 11</span>
+<span class="kw">print</span>(<span class="num">5</span>-<span class="num">6</span>)     <span class="cm"># -1</span>
+<span class="kw">print</span>(<span class="num">5</span>*<span class="num">6</span>)     <span class="cm"># 30</span>
+<span class="kw">print</span>(<span class="num">5</span>/<span class="num">2</span>)     <span class="cm"># 2.5</span>
+<span class="kw">print</span>(<span class="num">5</span>//<span class="num">2</span>)    <span class="cm"># 2</span>
+<span class="kw">print</span>(<span class="num">5</span>%<span class="num">2</span>)     <span class="cm"># 1</span>
+<span class="kw">print</span>(<span class="num">5</span>**<span class="num">2</span>)    <span class="cm"># 25</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember — the two everyone mixes up</div>
+        <b><code>//</code> floor/integer division:</b> "does what normal division does, and then converts the result to an integer." <code>5 // 2</code> → <code>2.5</code> → truncated to <code>2</code>.<br/><br/>
+        <b><code>%</code> modulus:</b> divides and gives the <i>remainder</i>. <code>5 % 2</code> → <code>1</code>. If the first number is smaller than the divisor, modulus just returns the number itself (<code>3 % 10 = 3</code>) — this fact is exactly what powers the digit-extraction trick in section 07.
+      </div>
+    </div>
+  </details>
+
+  <!-- 2 -->
+  <details class="section" id="s2" open>
+    <summary><span class="s-num">02</span><span class="s-title">Relational Operators</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Used whenever you compare two things — who's bigger, smaller, equal. These get used in almost every program you'll write from here on.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(4>5)     # False
+print(4<5)     # True
+print(4>=4)    # True
+print(4<=4)    # True
+print(4==4)    # True
+print(4!=4)    # False">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="num">4</span>>5)     <span class="cm"># False</span>
+<span class="kw">print</span>(<span class="num">4</span><5)     <span class="cm"># True</span>
+<span class="kw">print</span>(<span class="num">4</span>>=4)    <span class="cm"># True</span>
+<span class="kw">print</span>(<span class="num">4</span><=4)    <span class="cm"># True</span>
+<span class="kw">print</span>(<span class="num">4</span>==4)    <span class="cm"># True</span>
+<span class="kw">print</span>(<span class="num">4</span>!=4)    <span class="cm"># False</span></pre>
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Not to be confused with</div>
+        Relational operators (<code>&gt;</code>, <code>==</code>…) are <b>not</b> the same thing as "conditional operators" — a distinct term some students mix them up with.
+      </div>
+    </div>
+  </details>
+
+  <!-- 3 -->
+  <details class="section" id="s3" open>
+    <summary><span class="s-num">03</span><span class="s-title">Logical Operators</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(1 and 0)   # 0
+print(1 or 0)    # 1
+print(not 1)     # False">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="num">1</span> <span class="kw">and</span> <span class="num">0</span>)   <span class="cm"># 0</span>
+<span class="kw">print</span>(<span class="num">1</span> <span class="kw">or</span> <span class="num">0</span>)    <span class="cm"># 1</span>
+<span class="kw">print</span>(<span class="kw">not</span> <span class="num">1</span>)     <span class="cm"># False</span></pre>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Operator</th><th>Rule</th></tr>
+          <tr><td><code>and</code></td><td>Output is 1 only if <b>both</b> are 1. Even one 0 → output 0.</td></tr>
+          <tr><td><code>or</code></td><td>Output is 1 if <b>even one</b> is 1. Both 0 → output 0.</td></tr>
+          <tr><td><code>not</code></td><td>An inverter — 0 becomes 1, 1 becomes 0.</td></tr>
+        </table>
+      </div>
+      <p>Python internally maps <code>False</code>→0 and <code>True</code>→1, which is why results of logical expressions come back as booleans built on this 1/0 logic.</p>
+    </div>
+  </details>
+
+  <!-- 4 -->
+  <details class="section" id="s4" open>
+    <summary><span class="s-num">04</span><span class="s-title">Bitwise Operators</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>These operate on the actual <b>binary bit pattern</b> of numbers.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print(2 & 3)     # 2   -> bitwise AND
+print(2 | 3)     # 3   -> bitwise OR
+print(2 ^ 3)     # 1   -> bitwise XOR
+print(~3)        # -4  -> bitwise NOT
+print(4 >> 2)    # 1   -> right shift
+print(5 << 2)    # 20  -> left shift">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="num">2</span> & <span class="num">3</span>)     <span class="cm"># 2   -> bitwise AND</span>
+<span class="kw">print</span>(<span class="num">2</span> | <span class="num">3</span>)     <span class="cm"># 3   -> bitwise OR</span>
+<span class="kw">print</span>(<span class="num">2</span> ^ <span class="num">3</span>)     <span class="cm"># 1   -> bitwise XOR</span>
+<span class="kw">print</span>(~<span class="num">3</span>)        <span class="cm"># -4  -> bitwise NOT</span>
+<span class="kw">print</span>(<span class="num">4</span> >> <span class="num">2</span>)    <span class="cm"># 1   -> right shift</span>
+<span class="kw">print</span>(<span class="num">5</span> << <span class="num">2</span>)    <span class="cm"># 20  -> left shift</span></pre>
+      </div>
+      <h4>Worked example — 2 &amp; 3, bit by bit</h4>
+      <div class="bit-row">2 = <span class="bit on">1</span><span class="bit">0</span> &nbsp;&nbsp; 3 = <span class="bit on">1</span><span class="bit on">1</span></div>
+      <p>AND each column: <code>1 & 1 = 1</code>, <code>0 & 1 = 0</code> → binary <code>10</code> → decimal <b>2</b>. Same idea for OR (keep 1 if either bit is 1) and XOR.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Op</th><th>Rule (bit by bit)</th></tr>
+          <tr><td><code>&</code> AND</td><td>1 only if both bits are 1</td></tr>
+          <tr><td><code>|</code> OR</td><td>1 if either bit is 1</td></tr>
+          <tr><td><code>^</code> XOR</td><td><b>Same bits → 0, different bits → 1</b></td></tr>
+          <tr><td><code>~</code> NOT</td><td>Flips every bit — 1s become 0s and 0s become 1s</td></tr>
+          <tr><td><code>&lt;&lt;</code> left shift</td><td>Shifts the bit pattern left by N places</td></tr>
+          <tr><td><code>&gt;&gt;</code> right shift</td><td>Shifts the bit pattern right by N places</td></tr>
+        </table>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ How much you actually need these</div>
+        Outside AND/OR, bitwise ops (shifts, NOT, XOR) aren't used much in everyday programming or typical data science — maybe in image processing / computer vision. Get familiar with what they do; don't stress about mastering them right now.
+      </div>
+    </div>
+  </details>
+
+  <!-- 5 -->
+  <details class="section" id="s5" open>
+    <summary><span class="s-num">05</span><span class="s-title">Assignment Operators</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a = 2
+a %= 2     # same as: a = a % 2
+print(a)">Copy</button>
+        <pre class="code">a = <span class="num">2</span>
+a %= <span class="num">2</span>     <span class="cm"># same as: a = a % 2</span>
+<span class="kw">print</span>(a)</pre>
+      </div>
+      <p><code>=</code> assigns a value to a variable. Compound forms like <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code> are shorthand — <code>a += 2</code> means <code>a = a + 2</code>.</p>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Coming from C/C++? No <code>++</code> / <code>--</code> here</div>
+        Python deliberately has no <code>a++</code> or <code>++a</code>. The instructor's framing: "there's ambiguity, there's confusion — remember in C, half your time went into figuring out whether <code>++a</code> and <code>a++</code> give different output. Python removed the confusion — just one simple notation: <code>a += 2</code>." A real design-philosophy choice, not an oversight.
+      </div>
+    </div>
+  </details>
+
+  <!-- 6 -->
+  <details class="section" id="s6" open>
+    <summary><span class="s-num">06</span><span class="s-title">Membership Operators</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p><code>in</code> / <code>not in</code> — tells you whether something exists inside something else.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print('D' not in 'Delhi')     # False -> 'D' IS in 'Delhi'
+print(1 in [2,3,4,5,6])       # False">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="str">'D'</span> <span class="kw">not in</span> <span class="str">'Delhi'</span>)     <span class="cm"># False -> 'D' IS in 'Delhi'</span>
+<span class="kw">print</span>(<span class="num">1</span> <span class="kw">in</span> [<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>])       <span class="cm"># False</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Why this operator is a big deal</div>
+        "If this operator didn't exist and someone asked whether 'd' exists inside 'delhi', you'd have to run a loop, touch every character, and only then find out. Here you don't need a loop at all — this is optimized, runs faster than a loop." Same "batteries included" philosophy from Day 1. Works on strings, lists, tuples, sets and dicts — and it's <b>case-sensitive</b>.
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Two things NOT covered yet</div>
+        Python has <b>no dedicated ternary operator</b> — ternary-style logic is done via if-else instead (covered later). There's also an <b>identity operator</b> (<code>is</code>) — different from membership, saved for a future class.
+      </div>
+    </div>
+  </details>
+
+  <!-- 7 -->
+  <details class="section" id="s7" open>
+    <summary><span class="s-num">07</span><span class="s-title">Applied Program — Sum of Digits</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>The payoff example that shows <code>%</code> and <code>//</code> working together — extract digits one at a time from a number.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="number = int(input('Enter a 3 digit number'))
+
+# 345 % 10 -> 5
+a = number % 10
+number = number // 10
+
+# 34 % 10 -> 4
+b = number % 10
+number = number // 10
+
+# 3 % 10 -> 3
+c = number % 10
+
+print(a + b + c)">Copy</button>
+        <pre class="code">number = <span class="kw">int</span>(input(<span class="str">'Enter a 3 digit number'</span>))
+
+<span class="cm"># 345 % 10 -> 5</span>
+a = number % <span class="num">10</span>
+number = number // <span class="num">10</span>
+
+<span class="cm"># 34 % 10 -> 4</span>
+b = number % <span class="num">10</span>
+number = number // <span class="num">10</span>
+
+<span class="cm"># 3 % 10 -> 3</span>
+c = number % <span class="num">10</span>
+
+<span class="kw">print</span>(a + b + c)</pre>
+      </div>
+      <div class="out">Enter a 3 digit number <span style="opacity:.6">666</span><br/><b>18</b></div>
+      <ol>
+        <li><code>number % 10</code> isolates the <b>last digit</b> (345 % 10 = 5).</li>
+        <li><code>number // 10</code> shrinks the number, dropping that last digit (345 // 10 = 34).</li>
+        <li>Repeat — mod gives the next digit, floor-divide shrinks again.</li>
+        <li>Add up all extracted digits.</li>
+      </ol>
+      <div class="callout remember">
+        <div class="cal-head">★ Foreshadowing — this repetition is exactly what loops are for</div>
+        Doing this by hand for a 6-digit number would mean writing the same two lines six times — "not an efficient way… we'll improve this with a loop" once loops are covered (section 11–12).
+      </div>
+    </div>
+  </details>
+
+  <!-- 8 -->
+  <details class="section" id="s8" open>
+    <summary><span class="s-num">08</span><span class="s-title">If-Else — Branching</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p><span class="tag concept">Core idea</span> Programs normally run top to bottom. If-else exists to let a program <b>branch</b> — take Option 1 or Option 2 depending on a condition.</p>
+
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ No braces — Python uses indentation</div>
+        C/C++ wraps blocks in <code>{ }</code>. Python has <b>no round brackets, no curly braces, no semicolons</b> — after <code>if condition:</code> you press Enter and Python auto-indents the next line. That indentation <i>is</i> how Python knows what belongs inside the block. "There is only ONE way to write correct code in Python — with proper indentation." Wrong indentation → <code>SyntaxError</code>. Rule to lock in: <code>if</code> and its matching <code>else</code>/<code>elif</code> must sit at the <b>same</b> indentation level, vertically aligned.
+      </div>
+
+      <h4>Login program — if / elif / else + nested if</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="email = input('enter email')
+password = input('enter password')
+
+if email == 'nitish.campusx@gmail.com' and password == '1234':
+  print('Welcome')
+elif email == 'nitish.campusx@gmail.com' and password != '1234':
+  # give the user one more chance
+  print('Incorrect password')
+  password = input('enter password again')
+  if password == '1234':
+    print('Welcome,finally!')
+  else:
+    print('beta tumse na ho paayega!')
+else:
+  print('Not correct')">Copy</button>
+        <pre class="code">email = input(<span class="str">'enter email'</span>)
+password = input(<span class="str">'enter password'</span>)
+
+<span class="kw">if</span> email == <span class="str">'nitish.campusx@gmail.com'</span> <span class="kw">and</span> password == <span class="str">'1234'</span>:
+  <span class="kw">print</span>(<span class="str">'Welcome'</span>)
+<span class="kw">elif</span> email == <span class="str">'nitish.campusx@gmail.com'</span> <span class="kw">and</span> password != <span class="str">'1234'</span>:
+  <span class="cm"># give the user one more chance</span>
+  <span class="kw">print</span>(<span class="str">'Incorrect password'</span>)
+  password = input(<span class="str">'enter password again'</span>)
+  <span class="kw">if</span> password == <span class="str">'1234'</span>:
+    <span class="kw">print</span>(<span class="str">'Welcome,finally!'</span>)
+  <span class="kw">else</span>:
+    <span class="kw">print</span>(<span class="str">'beta tumse na ho paayega!'</span>)
+<span class="kw">else</span>:
+  <span class="kw">print</span>(<span class="str">'Not correct'</span>)</pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Why AND, never OR, for login checks</div>
+        "You need both email correct AND password correct. If you used OR, what a great website that'd be — it would log you in even with a wrong password just because the email matched!"
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ The general rule for if / elif / else</div>
+        Two possibilities → <code>if</code> / <code>else</code>. More than two → the middle ones become <code>elif</code>, and the very last one stays <code>else</code>. A <b>nested if</b> is simply an if-else written <i>inside</i> another if/elif/else block — used here to re-check the second password attempt.
+      </div>
+    </div>
+  </details>
+
+  <!-- 9 -->
+  <details class="section" id="s9" open>
+    <summary><span class="s-num">09</span><span class="s-title">Min of 3 Numbers &amp; Menu-Driven Calculator</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <h4>Min of 3 numbers <span class="tag interview" style="margin-left:6px">◆ common beginner interview Q</span></h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="a = int(input('first num'))
+b = int(input('second num'))
+c = int(input('third num'))
+
+if a<b and a<c:
+  print('smallest is',a)
+elif b<c:
+  print('smallest is',b)
+else:
+  print('smallest is',c)">Copy</button>
+        <pre class="code">a = <span class="kw">int</span>(input(<span class="str">'first num'</span>))
+b = <span class="kw">int</span>(input(<span class="str">'second num'</span>))
+c = <span class="kw">int</span>(input(<span class="str">'third num'</span>))
+
+<span class="kw">if</span> a<b <span class="kw">and</span> a<c:
+  <span class="kw">print</span>(<span class="str">'smallest is'</span>,a)
+<span class="kw">elif</span> b<c:
+  <span class="kw">print</span>(<span class="str">'smallest is'</span>,b)
+<span class="kw">else</span>:
+  <span class="kw">print</span>(<span class="str">'smallest is'</span>,c)</pre>
+      </div>
+      <div class="out">first num <span style="opacity:.6">4</span> · second num <span style="opacity:.6">1</span> · third num <span style="opacity:.6">10</span><br/><b>smallest is 1</b></div>
+      <p>Logic: check if <code>a</code> beats both others first — if not, <code>a</code> is ruled out, leaving only <code>b</code> vs <code>c</code> to compare. This is just <i>one</i> way to solve it — worth re-solving with a different approach as practice.</p>
+
+      <h4>Menu-driven calculator — multi-line prompts</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="menu = input(&quot;&quot;&quot;
+Hi! how can I help you.
+1. Enter 1 for pin change
+2. Enter 2 for balance check
+3. Enter 3 for withdrawl
+4. Enter 4 for exit
+&quot;&quot;&quot;)
+
+if menu == '1':
+  print('pin change')
+elif menu == '2':
+  print('balance')
+else:
+  print('exit')">Copy</button>
+        <pre class="code">menu = input(<span class="str">"""</span>
+<span class="str">Hi! how can I help you.</span>
+<span class="str">1. Enter 1 for pin change</span>
+<span class="str">2. Enter 2 for balance check</span>
+<span class="str">3. Enter 3 for withdrawl</span>
+<span class="str">4. Enter 4 for exit</span>
+<span class="str">"""</span>)
+
+<span class="kw">if</span> menu == <span class="str">'1'</span>:
+  <span class="kw">print</span>(<span class="str">'pin change'</span>)
+<span class="kw">elif</span> menu == <span class="str">'2'</span>:
+  <span class="kw">print</span>(<span class="str">'balance'</span>)
+<span class="kw">else</span>:
+  <span class="kw">print</span>(<span class="str">'exit'</span>)</pre>
+      </div>
+      <p>Real-world pattern behind ATMs and shopping-app text menus. Uses the <b>triple-quote multi-line string</b> from Day 1's Literals lesson to hold the whole menu as one prompt. A preview of the full banking-software pattern that returns once OOP is taught.</p>
+    </div>
+  </details>
+
+  <!-- 10 -->
+  <details class="section" id="s10" open>
+    <summary><span class="s-num">10</span><span class="s-title">Modules</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="quote">"A module is basically a Python file inside which some functions are already written. You import that file and bring it into your own code."</div>
+      <p><b>Core principle: code reusability.</b> "I don't need to write the entire code myself — someone has already written it, I can directly use it." This is exactly how you'll use Scikit-learn, TensorFlow and Keras later in ML — same import mechanism.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="import math
+math.sqrt(196)        # 14.0
+
+import keyword
+print(keyword.kwlist)  # list of all ~33 reserved keywords
+
+import random
+print(random.randint(1,100))   # a random int 1-100
+
+import datetime
+print(datetime.datetime.now())
+
+help('modules')       # lists every module available in this installation">Copy</button>
+        <pre class="code"><span class="kw">import</span> math
+math.sqrt(<span class="num">196</span>)        <span class="cm"># 14.0</span>
+
+<span class="kw">import</span> keyword
+<span class="kw">print</span>(keyword.kwlist)  <span class="cm"># list of all ~33 reserved keywords</span>
+
+<span class="kw">import</span> random
+<span class="kw">print</span>(random.randint(<span class="num">1</span>,<span class="num">100</span>))   <span class="cm"># a random int 1-100</span>
+
+<span class="kw">import</span> datetime
+<span class="kw">print</span>(datetime.datetime.now())
+
+<span class="kw">help</span>(<span class="str">'modules'</span>)       <span class="cm"># lists every module available in this installation</span></pre>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Module</th><th>Shown for</th></tr>
+          <tr><td><code>math</code></td><td><code>sqrt()</code>, <code>factorial()</code>, <code>floor()</code> — ready-made math functions</td></tr>
+          <tr><td><code>keyword</code></td><td><code>kwlist</code> — every Python reserved word, programmatically</td></tr>
+          <tr><td><code>random</code></td><td><code>randint(a,b)</code> — random integer, inclusive both ends</td></tr>
+          <tr><td><code>datetime</code></td><td><code>datetime.now()</code> — current date/time</td></tr>
+        </table>
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ datetime.now() on Colab isn't your local time</div>
+        It shows the timezone of Google Colab's server, not India's — nothing wrong with your code.
+      </div>
+      <p>Typo'd module name → <code>ModuleNotFoundError</code>. Successful import prints nothing — silence means it worked.</p>
+    </div>
+  </details>
+
+  <!-- 11 -->
+  <details class="section" id="s11" open>
+    <summary><span class="s-num">11</span><span class="s-title">Loops — While Loop</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="callout story">
+        <div class="cal-head">✎ Why loops matter — the Flipkart example</div>
+        A 78-product listing page isn't 78 hand-built containers — it's <b>one</b> template container, with image/description/price as variables, fetched from a database and rendered inside a loop that runs once per product. Same pattern powers Zomato listings, OLX, hotel booking sites. "A 4th-year student who could only answer 'loops are for printing tables' got rejected in his interview" — always have a real example ready, not just the textbook one.
+      </div>
+      <p>Python has two loop types: <b>while</b> (condition-driven) and <b>for</b> (sequence-driven).</p>
+
+      <h4>Multiplication table</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="number = int(input('enter the number'))
+i = 1
+
+while i<11:
+  print(number,'*',i,'=',number * i)
+  i += 1">Copy</button>
+        <pre class="code">number = <span class="kw">int</span>(input(<span class="str">'enter the number'</span>))
+i = <span class="num">1</span>
+
+<span class="kw">while</span> i<11:
+  <span class="kw">print</span>(number,<span class="str">'*'</span>,i,<span class="str">'='</span>,number * i)
+  i += <span class="num">1</span></pre>
+      </div>
+      <div class="out">enter the number <span style="opacity:.6">12</span><br/>12 * 1 = 12<br/>12 * 2 = 24<br/>... <br/>12 * 10 = 120</div>
+      <p><code>i</code> stands for <i>iteration</i> — a counter tracking how many times the loop has run. Tip flagged in class: use <a href="https://pythontutor.com" target="_blank">Python Tutor</a> to step through a loop line by line if the flow ever feels unclear.</p>
+
+      <h4>★ while…else — a Python-only feature</h4>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember — unusual to Python</div>
+        "Normally in other languages, <code>else</code> is only used with <code>if</code>. In Python you can attach <code>else</code> to a loop too." The <code>else</code> block runs once the loop finishes normally (its condition becomes False) — it's a natural-completion hook.
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="x = 1
+while x < 3:
+  print(x)
+  x += 1
+else:
+  print('limit crossed')">Copy</button>
+        <pre class="code">x = <span class="num">1</span>
+<span class="kw">while</span> x < <span class="num">3</span>:
+  <span class="kw">print</span>(x)
+  x += <span class="num">1</span>
+<span class="kw">else</span>:
+  <span class="kw">print</span>(<span class="str">'limit crossed'</span>)</pre>
+      </div>
+      <div class="out">1<br/>2<br/>limit crossed</div>
+
+      <h4>Number-guessing game — building logic incrementally</h4>
+      <div class="callout remember">
+        <div class="cal-head">★ Problem-solving habit</div>
+        "Whenever a program feels a bit difficult, break it into smaller pieces." Here: (1) get the compare-and-hint logic working alone first, (2) wrap it in a <code>while</code> so it repeats until correct, (3) attach <code>else</code> for the win message, (4) add a counter for attempts.
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="import random
+jackpot = random.randint(1,100)
+
+guess = int(input('guess karo'))
+counter = 1
+while guess != jackpot:
+  if guess < jackpot:
+    print('galat! guess higher')
+  else:
+    print('galat! guess lower')
+
+  guess = int(input('guess karo'))
+  counter += 1
+else:
+  print('correct guess')
+  print('attempts', counter)">Copy</button>
+        <pre class="code"><span class="kw">import</span> random
+jackpot = random.randint(<span class="num">1</span>,<span class="num">100</span>)
+
+guess = <span class="kw">int</span>(input(<span class="str">'guess karo'</span>))
+counter = <span class="num">1</span>
+<span class="kw">while</span> guess != jackpot:
+  <span class="kw">if</span> guess < jackpot:
+    <span class="kw">print</span>(<span class="str">'galat! guess higher'</span>)
+  <span class="kw">else</span>:
+    <span class="kw">print</span>(<span class="str">'galat! guess lower'</span>)
+
+  guess = <span class="kw">int</span>(input(<span class="str">'guess karo'</span>))
+  counter += <span class="num">1</span>
+<span class="kw">else</span>:
+  <span class="kw">print</span>(<span class="str">'correct guess'</span>)
+  <span class="kw">print</span>(<span class="str">'attempts'</span>, counter)</pre>
+      </div>
+      <p><code>counter</code> starts at <b>1</b>, not 0 — the user already guessed once before entering the loop, so that first guess needs counting too.</p>
+    </div>
+  </details>
+
+  <!-- 12 -->
+  <details class="section" id="s12" open>
+    <summary><span class="s-num">12</span><span class="s-title">Loops — For Loop</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="for i in range(1,11):
+  print(i)                     # 1 through 10 — range's 2nd arg is EXCLUDED
+
+for i in {1,2,3,4,5}:          # for loop works over sets too
+  print(i)
+
+for i in 'delhi':              # ...and strings, character by character
+  print(i)
+
+for i in range(1,11,2):        # step size -> 1, 3, 5, 7, 9
+  print(i)
+
+for i in range(10,0,-1):       # reverse: 10 down to 1
+  print(i)">Copy</button>
+        <pre class="code"><span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>,<span class="num">11</span>):
+  <span class="kw">print</span>(i)                     <span class="cm"># 1 through 10 — range's 2nd arg is EXCLUDED</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> {<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>}:          <span class="cm"># for loop works over sets too</span>
+  <span class="kw">print</span>(i)
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="str">'delhi'</span>:              <span class="cm"># ...and strings, character by character</span>
+  <span class="kw">print</span>(i)
+
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>,<span class="num">11</span>,<span class="num">2</span>):        <span class="cm"># step size -> 1, 3, 5, 7, 9</span>
+  <span class="kw">print</span>(i)
+
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">10</span>,<span class="num">0</span>,<span class="num">-1</span>):       <span class="cm"># reverse: 10 down to 1</span>
+  <span class="kw">print</span>(i)</pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ range() inclusivity rule</div>
+        First number included, second number excluded. <code>range(1,11)</code> → 1 through 10. Add a third argument for step size; a <b>negative step</b> (e.g. <code>-1</code>) counts backward.
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ For loop: Python vs. C/Java</div>
+        In C-style languages you state three things yourself: starting value, ending condition, increment (<code>i=0; i&lt;10; i++</code>). Python's for loop needs none of that — you just hand it a sequence of values (from <code>range()</code>, a string, a set…) and it loops through them automatically. "A bit different, more flexible, more powerful, and in my opinion a bit easier."
+      </div>
+
+      <h4>Population decreasing 10%/year, last 10 years</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="curr_pop = 10000
+
+for i in range(10,0,-1):
+  print(i, curr_pop)
+  curr_pop = curr_pop - 0.1*curr_pop">Copy</button>
+        <pre class="code">curr_pop = <span class="num">10000</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">10</span>,<span class="num">0</span>,<span class="num">-1</span>):
+  <span class="kw">print</span>(i, curr_pop)
+  curr_pop = curr_pop - <span class="num">0.1</span>*curr_pop</pre>
+      </div>
+      <div class="out">10 10000<br/>9 9000.0<br/>8 8100.0<br/>7 7290.0<br/>6 6561.0<br/>5 5904.9<br/>4 5314.41<br/>3 4782.969<br/>2 4304.6721<br/>1 3874.20489</div>
+      <p>Since population <i>grows</i> 10%/year going forward, walking <i>backward</i> in time means subtracting 10% each step — hence the reversed <code>range(10, 0, -1)</code>.</p>
+    </div>
+  </details>
+
+  <!-- 13 -->
+  <details class="section" id="s13" open>
+    <summary><span class="s-num">◆</span><span class="s-title">Deferred to Next Class — Not Yet Covered</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Class ran long, so the instructor put it to a chat vote — students chose to push the rest to the next session's first 40–45 minutes, right before moving into Strings and Lists. These are <b>genuinely not taught yet</b> — the notebook cells for them are empty stubs on purpose.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Topic</th><th>What's planned</th></tr>
+          <tr><td>Nested loops</td><td>A loop inside a loop — needed for pattern-printing problems</td></tr>
+          <tr><td>Pattern 1</td><td>Print a triangle of asterisks (3 rows growing then shrinking, e.g. <code>***</code> / <code>****</code> / <code>***</code>)</td></tr>
+          <tr><td>Pattern 2</td><td>Print a numeric diamond: <code>1</code> / <code>121</code> / <code>12321</code> / <code>1234321</code></td></tr>
+          <tr><td>Unique combinations of 1,2,3,4</td><td>Nested-loop combination generation</td></tr>
+          <tr><td><code>break</code></td><td>Previewed use case: linear search / finding primes in a range</td></tr>
+          <tr><td><code>continue</code></td><td>Previewed use case: an e-commerce-style skip scenario</td></tr>
+          <tr><td><code>pass</code></td><td>The no-op placeholder statement</td></tr>
+          <tr><td>Sequence sum</td><td><code>1/1! + 2/2! + 3/3! + ...</code> — left as an exercise</td></tr>
+        </table>
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Worth trying yourself first</div>
+        These are good "write it from scratch" candidates before the next class covers them — especially the two patterns and the sequence sum. Send me your attempts and I'll build a hints + solutions set once you've had a go.
+      </div>
+    </div>
+  </details>
+
+  <!-- 14 Cheat sheet -->
+  <details class="section" id="s14" open>
+    <summary><span class="s-num">★</span><span class="s-title">60-Second Cheat Sheet</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="cheat-grid">
+        <div class="cheat-card"><h5>// vs %</h5><p>Floor division truncates to int · modulus gives the remainder</p></div>
+        <div class="cheat-card"><h5>Logical rules</h5><p>AND: both 1 · OR: either 1 · NOT: flips</p></div>
+        <div class="cheat-card"><h5>XOR</h5><p>Same bits → 0, different bits → 1</p></div>
+        <div class="cheat-card"><h5>No ++ in Python</h5><p>Use <code>a += 1</code> — removes C-style ambiguity</p></div>
+        <div class="cheat-card"><h5>Membership</h5><p><code>in</code>/<code>not in</code> — faster than a manual loop</p></div>
+        <div class="cheat-card"><h5>Digit extraction</h5><p><code>n % 10</code> = last digit · <code>n // 10</code> = shrink</p></div>
+        <div class="cheat-card"><h5>Indentation</h5><p>No braces — indentation IS the block structure</p></div>
+        <div class="cheat-card"><h5>if / elif / else</h5><p>2 options → if/else · 3+ → elif in the middle</p></div>
+        <div class="cheat-card"><h5>Modules</h5><p><code>import</code> = reuse someone else's pre-written code</p></div>
+        <div class="cheat-card"><h5>while-else / for-else</h5><p>else runs once the loop finishes normally</p></div>
+        <div class="cheat-card"><h5>range()</h5><p>Start included, stop excluded; 3rd arg = step (negative = reverse)</p></div>
+        <div class="cheat-card"><h5>Next class</h5><p>Nested loops, patterns, break/continue/pass, then Strings &amp; Lists</p></div>
+      </div>
+    </div>
+  </details>
+
+  <footer>Built from the CampusX Session 2 transcript + class notebook · keep this open while you revise</footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.getAttribute('data-copy') || '';
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(function(){ btn.textContent = old; }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){
+          fallbackCopy(text); done();
+        });
+      } else {
+        fallbackCopy(text); done();
+      }
+    });
+  });
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  }
+</script>
