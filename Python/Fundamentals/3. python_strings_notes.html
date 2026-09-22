@@ -1,0 +1,855 @@
+<title>Python Strings</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg:#F4F6F5; --surface:#FFFFFF; --surface-2:#ECF1EE;
+    --ink:#16241F; --ink-soft:#4B5D57; --border:#D7E0DB;
+    --accent:#0E7C66; --accent-soft:#DCEFE8;
+    --accent-2:#C67F0E; --accent-2-soft:#FBEBD2;
+    --danger:#B8453A; --danger-soft:#F8E3DF;
+    --interview:#5551C9; --interview-soft:#E7E7FA;
+    --code-bg:#12201B; --code-ink:#BEF6DC; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#6E8079; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(20,40,35,.07), 0 10px 28px rgba(20,40,35,.08);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+      --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+      --accent:#3FCFA3; --accent-soft:#153228;
+      --accent-2:#F0B84D; --accent-2-soft:#33291A;
+      --danger:#E28074; --danger-soft:#3A211E;
+      --interview:#ABABF7; --interview-soft:#231F3D;
+      --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+    --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+    --accent:#3FCFA3; --accent-soft:#153228;
+    --accent-2:#F0B84D; --accent-2-soft:#33291A;
+    --danger:#E28074; --danger-soft:#3A211E;
+    --interview:#ABABF7; --interview-soft:#231F3D;
+    --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Work Sans', system-ui, sans-serif;
+    padding-inline:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Fraunces', Georgia, serif; text-wrap:balance; margin:0; }
+  a{ color:var(--accent); }
+  .wrap{ max-width:760px; margin:0 auto; padding-block:28px 80px; }
+
+  .hero{
+    background:linear-gradient(155deg, var(--surface) 0%, var(--surface-2) 100%);
+    border:1px solid var(--border); border-radius:20px;
+    padding:28px 26px; box-shadow:var(--shadow); margin-bottom:18px;
+    position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+    background:var(--accent-soft); border-radius:50%; opacity:.7; z-index:0;
+  }
+  .hero-inner{ position:relative; z-index:1; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-soft);
+    padding:5px 11px; border-radius:100px; margin-bottom:12px;
+  }
+  .hero h1{ font-size:clamp(26px,6vw,38px); font-weight:700; line-height:1.08; }
+  .hero p.sub{ margin:10px 0 0; color:var(--ink-soft); font-size:15.5px; max-width:52ch; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .meta-chip{
+    font-size:12.5px; font-weight:600; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:5px 10px; font-family:'JetBrains Mono',monospace;
+  }
+
+  .toc{
+    display:flex; gap:8px; overflow-x:auto; padding:4px 2px 14px;
+    margin-bottom:6px; scrollbar-width:thin;
+  }
+  .toc a{
+    flex:0 0 auto; text-decoration:none; font-size:13px; font-weight:600;
+    color:var(--ink-soft); background:var(--surface); border:1px solid var(--border);
+    padding:7px 13px; border-radius:100px; white-space:nowrap;
+  }
+  .toc a span{ color:var(--accent); font-family:'JetBrains Mono',monospace; margin-right:5px; }
+  .toc-group{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); flex:0 0 auto; display:flex; align-items:center; padding:0 4px; }
+
+  .legend{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 22px; }
+  .tag{
+    font-size:11.5px; font-weight:700; letter-spacing:.02em;
+    padding:4px 10px; border-radius:7px; display:inline-flex; align-items:center; gap:5px;
+  }
+  .tag.remember{ background:var(--accent-2-soft); color:var(--accent-2); }
+  .tag.gotcha{ background:var(--danger-soft); color:var(--danger); }
+  .tag.interview{ background:var(--interview-soft); color:var(--interview); }
+  .tag.concept{ background:var(--accent-soft); color:var(--accent); }
+  .tag.story{ background:var(--surface-2); color:var(--ink-soft); border:1px solid var(--border); }
+
+  .part-heading{
+    font-family:'Fraunces',serif; font-weight:600; font-size:14px; text-transform:uppercase;
+    letter-spacing:.08em; color:var(--ink-soft); margin:26px 2px 10px; display:flex; align-items:center; gap:10px;
+  }
+  .part-heading::after{ content:""; flex:1; height:1px; background:var(--border); }
+
+  details.section{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    margin-bottom:14px; box-shadow:var(--shadow); overflow:hidden;
+  }
+  details.section > summary{
+    list-style:none; cursor:pointer; padding:18px 20px;
+    display:flex; align-items:center; gap:13px; user-select:none;
+  }
+  details.section > summary::-webkit-details-marker{ display:none; }
+  .s-num{
+    flex:0 0 auto; width:34px; height:34px; border-radius:10px;
+    background:var(--accent-soft); color:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:12.5px;
+  }
+  .s-title{ font-family:'Fraunces',serif; font-weight:600; font-size:18px; flex:1 1 auto; }
+  .chev{ color:var(--ink-soft); transition:transform .2s ease; flex:0 0 auto; }
+  details[open] > summary .chev{ transform:rotate(90deg); }
+  .s-body{ padding:0 20px 22px; }
+  .s-body > *:first-child{ margin-top:0; }
+  .s-body p{ line-height:1.65; color:var(--ink); font-size:15px; margin:0 0 12px; }
+  .s-body h4{ font-family:'Work Sans',sans-serif; font-size:14.5px; font-weight:700; margin:18px 0 8px; color:var(--ink); }
+  .s-body ul, .s-body ol{ margin:0 0 12px; padding-left:22px; line-height:1.65; font-size:15px; }
+  .s-body li{ margin-bottom:5px; }
+  .quote{
+    font-family:'Fraunces',serif; font-style:italic; font-size:15.5px;
+    color:var(--ink-soft); border-left:3px solid var(--accent);
+    padding:2px 0 2px 14px; margin:12px 0;
+  }
+
+  .callout{
+    border-radius:12px; padding:13px 15px; margin:14px 0; font-size:14.5px; line-height:1.6;
+    border:1px solid transparent;
+  }
+  .callout .cal-head{ font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; display:flex; align-items:center; gap:6px; }
+  .callout.remember{ background:var(--accent-2-soft); color:var(--ink); border-color:color-mix(in srgb, var(--accent-2) 30%, transparent); }
+  .callout.remember .cal-head{ color:var(--accent-2); }
+  .callout.gotcha{ background:var(--danger-soft); color:var(--ink); border-color:color-mix(in srgb, var(--danger) 30%, transparent); }
+  .callout.gotcha .cal-head{ color:var(--danger); }
+  .callout.interview{ background:var(--interview-soft); color:var(--ink); border-color:color-mix(in srgb, var(--interview) 30%, transparent); }
+  .callout.interview .cal-head{ color:var(--interview); }
+  .callout.story{ background:var(--surface-2); color:var(--ink); border-color:var(--border); }
+  .callout.story .cal-head{ color:var(--ink-soft); }
+
+  .code-wrap{ position:relative; margin:12px 0; border-radius:12px; overflow:hidden; box-shadow:var(--shadow); }
+  pre.code{
+    background:var(--code-bg); color:var(--code-ink); margin:0; padding:14px 44px 14px 16px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6;
+    overflow-x:auto; white-space:pre;
+  }
+  pre.code .kw{ color:var(--code-kw); }
+  pre.code .str{ color:var(--code-str); }
+  pre.code .cm{ color:var(--code-cm); }
+  pre.code .num{ color:var(--code-num); }
+  .copy-btn{
+    position:absolute; top:8px; right:8px; background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18); color:#cfe9df; border-radius:7px;
+    font-family:'Work Sans',sans-serif; font-size:11px; font-weight:600;
+    padding:5px 9px; cursor:pointer;
+  }
+  .copy-btn:hover{ background:rgba(255,255,255,.16); }
+  .out{
+    background:var(--surface-2); border:1px dashed var(--border); border-radius:10px;
+    padding:9px 13px; font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    color:var(--ink-soft); margin:-4px 0 12px;
+  }
+  .out b{ color:var(--ink); font-weight:600; }
+
+  .tbl-wrap{ overflow-x:auto; margin:14px 0; border-radius:12px; border:1px solid var(--border); }
+  table{ border-collapse:collapse; width:100%; font-size:13.5px; min-width:460px; }
+  th{
+    background:var(--surface-2); text-align:left; padding:9px 12px; font-weight:700;
+    color:var(--ink); border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  td{ padding:9px 12px; border-bottom:1px solid var(--border); color:var(--ink); vertical-align:top; }
+  tr:last-child td{ border-bottom:none; }
+  td code, li code, p code{
+    font-family:'JetBrains Mono',monospace; background:var(--surface-2); padding:1px 6px;
+    border-radius:5px; font-size:.92em; color:var(--accent);
+  }
+
+  .cheat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin:14px 0; }
+  .cheat-card{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:13px 14px;
+  }
+  .cheat-card h5{ margin:0 0 6px; font-size:13px; font-family:'JetBrains Mono',monospace; color:var(--accent); font-weight:700; }
+  .cheat-card p{ margin:0; font-size:13px; color:var(--ink-soft); line-height:1.55; }
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:12.5px; margin-top:26px; }
+
+  @media (max-width:480px){
+    .s-title{ font-size:16.5px; }
+    .hero h1{ font-size:24px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">● CampusX &nbsp;·&nbsp; Data Science Mentorship &nbsp;·&nbsp; Session 3 + Supplement</span>
+      <h1>Python Strings</h1>
+      <p class="sub">The complete Strings module — immutability, slicing, the and/or quirk, every string function, and all 8 practice programs from the supplementary session. (Loops left over from Session 2 now live in the Operators/If-Else/Loops notes.)</p>
+      <div class="meta-row">
+        <span class="meta-chip">16 sections</span>
+        <span class="meta-chip">"90% of interviews = knowing strings well"</span>
+        <span class="meta-chip">source: 2 transcripts + class notebook</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="tag remember">★ Remember</span>
+    <span class="tag gotcha">⚠ Gotcha</span>
+    <span class="tag interview">◆ Interview</span>
+    <span class="tag concept">● Core idea</span>
+    <span class="tag story">✎ Analogy</span>
+  </div>
+
+  <nav class="toc" aria-label="Table of contents">
+    <a href="#s1"><span>01</span>What is a String</a>
+    <a href="#s2"><span>02</span>Creating</a>
+    <a href="#s3"><span>03</span>Indexing</a>
+    <a href="#s4"><span>04</span>Slicing</a>
+    <a href="#s5"><span>05</span>Immutability</a>
+    <a href="#s6"><span>06</span>Operations</a>
+    <a href="#s7"><span>07</span>Common Functions</a>
+    <a href="#s8"><span>08</span>Case Functions</a>
+    <a href="#s9"><span>09</span>count/find/index</a>
+    <a href="#s10"><span>10</span>starts/endswith</a>
+    <a href="#s11"><span>11</span>format()</a>
+    <a href="#s12"><span>12</span>is-checks</a>
+    <a href="#s13"><span>13</span>split/join</a>
+    <a href="#s14"><span>14</span>replace/strip</a>
+    <a href="#s15"><span>◆</span>8 Practice Programs</a>
+    <a href="#s16"><span>★</span>Cheat Sheet</a>
+  </nav>
+
+  <!-- 1 -->
+  <details class="section" id="s1" open>
+    <summary><span class="s-num">01</span><span class="s-title">What Is a String? — Unicode, not ASCII</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Plainly: any text — "Hello World", "My name is Nitish" — is a string. Structurally: a <b>collection of characters</b>.</p>
+      <div class="callout remember">
+        <div class="cal-head">★ The official definition — and why it matters</div>
+        "In Python specifically, strings are a sequence of <b>Unicode</b> characters" — not just "characters." Early 8-bit machines could only represent 256 characters (<b>ASCII</b>) — fine for English, but far too small once people needed to type in other languages. The fix: a 16-bit character set (<b>Unicode</b>, 2¹⁶ combinations) that can hold characters from many languages — and emojis. Python strings are Unicode-based, not ASCII-based — an explicitly flagged, important distinction.
+      </div>
+    </div>
+  </details>
+
+  <!-- 6 -->
+  <details class="section" id="s2" open>
+    <summary><span class="s-num">02</span><span class="s-title">Creating Strings</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = 'hello'
+s = &quot;hello&quot;
+# multiline strings
+s = '''hello'''
+s = &quot;&quot;&quot;hello&quot;&quot;&quot;
+s = str('hello')
+print(s)
+
+&quot;it's raining outside&quot;   # double quotes let the apostrophe through">Copy</button>
+        <pre class="code">s = <span class="str">'hello'</span>
+s = <span class="str">"hello"</span>
+<span class="cm"># multiline strings</span>
+s = <span class="str">'''hello'''</span>
+s = <span class="str">"""hello"""</span>
+s = <span class="kw">str</span>(<span class="str">'hello'</span>)
+<span class="kw">print</span>(s)
+
+<span class="str">"it's raining outside"</span>   <span class="cm"># double quotes let the apostrophe through</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Why both single AND double quotes exist</div>
+        Try wrapping <code>It's raining outside</code> entirely in single quotes — Python reads the string as ending right at the apostrophe in "It's", breaking the rest. Fix: wrap the whole thing in <b>double</b> quotes instead, so the inner apostrophe is just a literal character (and vice-versa for a sentence containing a double quote). Triple quotes (either kind) are for <b>multi-line</b> strings — e.g. capturing a whole blog post a user typed.
+      </div>
+      <p>Raw strings exist too, but were explicitly deferred to a later interview-prep class.</p>
+    </div>
+  </details>
+
+  <!-- 7 -->
+  <details class="section" id="s3" open>
+    <summary><span class="s-num">03</span><span class="s-title">Indexing</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = 'hello world'
+print(s[41])     # IndexError: string index out of range
+
+s = 'hello world'
+print(s[-3])      # 'r' -> negative indexing">Copy</button>
+        <pre class="code">s = <span class="str">'hello world'</span>
+<span class="kw">print</span>(s[<span class="num">41</span>])     <span class="cm"># IndexError: string index out of range</span>
+
+s = <span class="str">'hello world'</span>
+<span class="kw">print</span>(s[<span class="num">-3</span>])      <span class="cm"># 'r' -> negative indexing</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember — the summary he gave</div>
+        Positive indexing: left to right, starts from <b>0</b>. Negative indexing: right to left, starts from <b>-1</b> (last character), <b>-2</b> (second-last), and so on. Going past the string's length in either direction → <code>IndexError</code>.
+      </div>
+    </div>
+  </details>
+
+  <!-- 8 -->
+  <details class="section" id="s4" open>
+    <summary><span class="s-num">04</span><span class="s-title">Slicing — including the negative-step gotcha</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Slicing extracts <i>more than one</i> character at once: <code>s[start:end]</code>, end excluded — same shape as strings you've already seen with lists.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = 'hello world'
+print(s[6:0:-2])     # 'wol'
+print(s[::-1])        # 'dlrow olleh' -> the famous one-liner to reverse a string
+print(s[-1:-6:-1])    # 'dlrow'">Copy</button>
+        <pre class="code">s = <span class="str">'hello world'</span>
+<span class="kw">print</span>(s[<span class="num">6</span>:<span class="num">0</span>:<span class="num">-2</span>])     <span class="cm"># 'wol'</span>
+<span class="kw">print</span>(s[::<span class="num">-1</span>])        <span class="cm"># 'dlrow olleh' -> the famous one-liner to reverse a string</span>
+<span class="kw">print</span>(s[<span class="num">-1</span>:<span class="num">-6</span>:<span class="num">-1</span>])    <span class="cm"># 'dlrow'</span></pre>
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ The rule everyone trips on — negative step direction</div>
+        "Whenever you take a negative step, the first number should be bigger than the second — otherwise it won't work." That's why <code>s[6:0:-2]</code> starts at 6 and walks <i>down</i> to (excluding) 0, taking every second character on the way → <code>'wol'</code>. Try to slice with the numbers the "normal" way round using a negative step and you get an empty result.
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Excluding the end you actually wanted</div>
+        To grab "World" from "hello world" via negative indices, <code>s[-5:-1]</code> looks right but <b>excludes</b> the very last character ('d'), giving "Worl". Omit the end index entirely — <code>s[-5:]</code> — to include everything to the end.
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ The one-liner worth memorizing</div>
+        <code>s[::-1]</code> reverses any string in one line — no loop needed, unlike C or Java. You'll reach for this constantly.
+      </div>
+    </div>
+  </details>
+
+  <!-- 9 -->
+  <details class="section" id="s5" open>
+    <summary><span class="s-num">05</span><span class="s-title">Editing &amp; Deleting — Strings Are Immutable</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = 'hello world'
+s[0] = 'H'
+# TypeError: 'str' object does not support item assignment
+
+s = 'hello world'
+del s
+print(s)
+# NameError: name 's' is not defined
+
+s = 'hello world'
+del s[-1:-5:2]
+print(s)
+# TypeError: 'str' object does not support item deletion">Copy</button>
+        <pre class="code">s = <span class="str">'hello world'</span>
+s[<span class="num">0</span>] = <span class="str">'H'</span>
+<span class="cm"># TypeError: 'str' object does not support item assignment</span>
+
+s = <span class="str">'hello world'</span>
+<span class="kw">del</span> s
+<span class="kw">print</span>(s)
+<span class="cm"># NameError: name 's' is not defined</span>
+
+s = <span class="str">'hello world'</span>
+<span class="kw">del</span> s[<span class="num">-1</span>:<span class="num">-5</span>:<span class="num">2</span>]
+<span class="kw">print</span>(s)
+<span class="cm"># TypeError: 'str' object does not support item deletion</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Very, very important — flagged twice by the instructor</div>
+        "Once you've created a string in Python, you cannot change it." This is called <b>immutability</b> — like how a virus "mutates" (changes), an immutable type can't. You can't edit a character in place, and you can't delete part of a string either — trying either throws a <code>TypeError</code>. <code>del s</code> only removes the <i>variable name</i>, not necessarily the string data itself at the memory level (deeper coverage saved for a future class).
+      </div>
+    </div>
+  </details>
+
+  <!-- 10 -->
+  <details class="section" id="s6" open>
+    <summary><span class="s-num">06</span><span class="s-title">Operations on Strings</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <h4>Arithmetic — only + and *</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print('delhi' + ' ' + 'mumbai')    # concatenation
+print('delhi'*5)                   # repetition
+print('*'*50)                      # handy for building separators/table borders">Copy</button>
+        <pre class="code"><span class="kw">print</span>(<span class="str">'delhi'</span> + <span class="str">' '</span> + <span class="str">'mumbai'</span>)    <span class="cm"># concatenation</span>
+<span class="kw">print</span>(<span class="str">'delhi'</span>*<span class="num">5</span>)                   <span class="cm"># repetition</span>
+<span class="kw">print</span>(<span class="str">'*'</span>*<span class="num">50</span>)                      <span class="cm"># handy for building separators/table borders</span></pre>
+      </div>
+      <p>Only <code>+</code> and <code>*</code> work on strings — subtraction, division, modulus don't apply.</p>
+
+      <h4>Relational — lexicographic (dictionary-order) comparison</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="'delhi' != 'delhi'      # False
+
+'mumbai' > 'pune'        # False -> 'm' comes before 'p' in dictionary order
+'Pune' > 'pune'           # False -> capital letters have SMALLER ASCII values">Copy</button>
+        <pre class="code"><span class="str">'delhi'</span> != <span class="str">'delhi'</span>      <span class="cm"># False</span>
+
+<span class="str">'mumbai'</span> > <span class="str">'pune'</span>        <span class="cm"># False -> 'm' comes before 'p' in dictionary order</span>
+<span class="str">'Pune'</span> > <span class="str">'pune'</span>           <span class="cm"># False -> capital letters have SMALLER ASCII values</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Not character count — dictionary order</div>
+        "Mumbai" has more letters than "Pune", but that's irrelevant — comparison works like an Oxford dictionary: whichever word would appear <i>later</i> is "bigger". Since "Mumbai" comes before "Pune" alphabetically, it's the smaller one. Comparisons are ultimately done on ASCII values, and capital letters sit at <i>lower</i> ASCII values than their lowercase counterparts — so <code>'Pune' > 'pune'</code> is False.
+      </div>
+
+      <h4>Logical — the and/or quirk (interview favorite)</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="'hello' and 'world'    # 'world'
+'hello' or 'world'     # 'hello'
+'' and 'world'          # ''
+'' or 'world'           # 'world'
+not 'hello'             # False">Copy</button>
+        <pre class="code"><span class="str">'hello'</span> <span class="kw">and</span> <span class="str">'world'</span>    <span class="cm"># 'world'</span>
+<span class="str">'hello'</span> <span class="kw">or</span> <span class="str">'world'</span>     <span class="cm"># 'hello'</span>
+<span class="str">''</span> <span class="kw">and</span> <span class="str">'world'</span>          <span class="cm"># ''</span>
+<span class="str">''</span> <span class="kw">or</span> <span class="str">'world'</span>           <span class="cm"># 'world'</span>
+<span class="kw">not</span> <span class="str">'hello'</span>             <span class="cm"># False</span></pre>
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ The rule to memorize (genuinely asked in interviews)</div>
+        A non-empty string is <b>truthy</b>; an empty string <code>''</code> is <b>falsy</b>. With <code>and</code>, Python can't settle the result from the first operand alone (if it's truthy) — it must check the second operand too, so <b>the second string is what gets returned</b> when both are truthy. With <code>or</code>, the moment the first operand is truthy, Python already knows the result — so <b>the first string is returned</b> without even checking the second. (This is short-circuit evaluation — Python returns the actual operand, not a plain <code>True</code>/<code>False</code>.)
+      </div>
+
+      <h4>Loops &amp; membership</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="for i in 'hello':
+  print(i)              # prints each character on its own line
+
+for i in 'delhi':
+  print('pune')          # prints 'pune' 5 times -> once per character in 'delhi'
+
+'D' in 'delhi'            # False -> case-sensitive!">Copy</button>
+        <pre class="code"><span class="kw">for</span> i <span class="kw">in</span> <span class="str">'hello'</span>:
+  <span class="kw">print</span>(i)              <span class="cm"># prints each character on its own line</span>
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="str">'delhi'</span>:
+  <span class="kw">print</span>(<span class="str">'pune'</span>)          <span class="cm"># prints 'pune' 5 times -> once per character in 'delhi'</span>
+
+<span class="str">'D'</span> <span class="kw">in</span> <span class="str">'delhi'</span>            <span class="cm"># False -> case-sensitive!</span></pre>
+      </div>
+      <p>Strings are iterable, so loops just work — the loop runs once per <i>character</i>, regardless of what you actually print inside it.</p>
+    </div>
+  </details>
+
+  <!-- 11 -->
+  <details class="section" id="s7" open>
+    <summary><span class="s-num">07</span><span class="s-title">Common Functions — len / max / min / sorted</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="len('hello world')                      # 11 (spaces count)
+max('hello world')                      # 'w' -> highest ASCII value
+min('hello world')                      # ' ' -> space has a low ASCII value
+sorted('hello world', reverse=True)     # returns a LIST, not a string">Copy</button>
+        <pre class="code"><span class="kw">len</span>(<span class="str">'hello world'</span>)                      <span class="cm"># 11 (spaces count)</span>
+<span class="kw">max</span>(<span class="str">'hello world'</span>)                      <span class="cm"># 'w' -> highest ASCII value</span>
+<span class="kw">min</span>(<span class="str">'hello world'</span>)                      <span class="cm"># ' ' -> space has a low ASCII value</span>
+sorted(<span class="str">'hello world'</span>, reverse=<span class="kw">True</span>)     <span class="cm"># returns a LIST, not a string</span></pre>
+      </div>
+      <p>These four work across strings, lists, tuples, sets and dicts — the same functions will resurface everywhere. <code>min()</code> on "hello world" quietly returns a space character — easy to miss since it's invisible in output.</p>
+    </div>
+  </details>
+
+  <!-- 12 -->
+  <details class="section" id="s8" open>
+    <summary><span class="s-num">08</span><span class="s-title">Case Functions — and proof they don't mutate</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = 'hello world'
+print(s.capitalize())    # 'Hello world'
+print(s)                  # 'hello world' -> s itself is UNCHANGED
+
+s.title()                 # 'Hello World'
+s.upper()                 # 'HELLO WORLD'
+'Hello Wolrd'.lower()      # 'hello wolrd'
+'HeLlO WorLD'.swapcase()   # 'hElLo wORld'">Copy</button>
+        <pre class="code">s = <span class="str">'hello world'</span>
+<span class="kw">print</span>(s.capitalize())    <span class="cm"># 'Hello world'</span>
+<span class="kw">print</span>(s)                  <span class="cm"># 'hello world' -> s itself is UNCHANGED</span>
+
+s.title()                 <span class="cm"># 'Hello World'</span>
+s.upper()                 <span class="cm"># 'HELLO WORLD'</span>
+<span class="str">'Hello Wolrd'</span>.lower()      <span class="cm"># 'hello wolrd'</span>
+<span class="str">'HeLlO WorLD'</span>.swapcase()   <span class="cm"># 'hElLo wORld'</span></pre>
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ The exact interview answer for "but these functions DO change the string?"</div>
+        A student asked this directly. The proof: call <code>s.capitalize()</code>, then print <code>s</code> again — <code>s</code> is still the original. Every one of these functions builds a <b>brand-new string</b> in memory and hands that back to you; none of them touch the original. This is the live confirmation of immutability from section 09 — use it as the answer if this comes up in an interview.
+      </div>
+      <p><code>capitalize()</code> — handy for names stored lowercase in a database, capitalized only when displayed. <code>title()</code> — blog-heading style, first letter of every word capitalized.</p>
+    </div>
+  </details>
+
+  <!-- 13 -->
+  <details class="section" id="s9" open>
+    <summary><span class="s-num">09</span><span class="s-title">count / find / index</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="'my name is nitish'.count('i')     # 3
+
+'my name is nitish'.find('x')       # -1  -> not found, no error
+'my name is nitish'.index('x')      # ValueError: substring not found">Copy</button>
+        <pre class="code"><span class="str">'my name is nitish'</span>.count(<span class="str">'i'</span>)     <span class="cm"># 3</span>
+
+<span class="str">'my name is nitish'</span>.find(<span class="str">'x'</span>)       <span class="cm"># -1  -> not found, no error</span>
+<span class="str">'my name is nitish'</span>.index(<span class="str">'x'</span>)      <span class="cm"># ValueError: substring not found</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ find vs. index — same success case, different failure case</div>
+        Both return the position of a substring when found. The difference is only what happens when it's <b>not</b> found: <code>find()</code> returns <code>-1</code> quietly; <code>index()</code> raises a <code>ValueError</code>. Use <code>find()</code> when absence is a normal case you want to handle gracefully without a try/except; use <code>index()</code> when you're confident the substring must exist and want a hard failure otherwise.
+      </div>
+    </div>
+  </details>
+
+  <!-- 14 -->
+  <details class="section" id="s10" open>
+    <summary><span class="s-num">10</span><span class="s-title">startswith / endswith</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="'my name is nitish'.endswith('sho')      # False
+'my name is nitish'.startswith('1my')     # False">Copy</button>
+        <pre class="code"><span class="str">'my name is nitish'</span>.endswith(<span class="str">'sho'</span>)      <span class="cm"># False</span>
+<span class="str">'my name is nitish'</span>.startswith(<span class="str">'1my'</span>)     <span class="cm"># False</span></pre>
+      </div>
+      <p>Checks whether a string starts or ends with a given substring — returns a plain boolean.</p>
+    </div>
+  </details>
+
+  <!-- 15 -->
+  <details class="section" id="s11" open>
+    <summary><span class="s-num">11</span><span class="s-title">format()</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="name = 'nitish'
+gender = 'male'
+
+'Hi my name is {1} and I am a {0}'.format(gender,name)
+# 'Hi my name is nitish and I am a male'">Copy</button>
+        <pre class="code">name = <span class="str">'nitish'</span>
+gender = <span class="str">'male'</span>
+
+<span class="str">'Hi my name is {1} and I am a {0}'</span>.format(gender,name)
+<span class="cm"># 'Hi my name is nitish and I am a male'</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Positional index, not argument order</div>
+        <code>{0}</code> and <code>{1}</code> refer to <i>argument position</i>, not template position — whatever was passed <b>first</b> to <code>.format()</code> always fills every <code>{0}</code> in the template, wherever it appears. This lets you control layout independent of argument order.
+      </div>
+      <p>Preferred over old C-style <code>%</code> formatting — "the industry doesn't work on that much" anymore.</p>
+    </div>
+  </details>
+
+  <!-- 16 -->
+  <details class="section" id="s12" open>
+    <summary><span class="s-num">12</span><span class="s-title">isalnum / isalpha / isdigit / isidentifier</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="'nitish1234%'.isalnum()      # False -> % is not alphanumeric
+'nitish'.isalpha()            # True
+'123abc'.isdigit()            # False -> contains letters
+'first-name'.isidentifier()    # False -> hyphen not allowed
+'name1'.isidentifier()         # True
+'1name'.isidentifier()         # False -> can't start with a digit">Copy</button>
+        <pre class="code"><span class="str">'nitish1234%'</span>.isalnum()      <span class="cm"># False -> % is not alphanumeric</span>
+<span class="str">'nitish'</span>.isalpha()            <span class="cm"># True</span>
+<span class="str">'123abc'</span>.isdigit()            <span class="cm"># False -> contains letters</span>
+<span class="str">'first-name'</span>.isidentifier()    <span class="cm"># False -> hyphen not allowed</span>
+<span class="str">'name1'</span>.isidentifier()         <span class="cm"># True</span>
+<span class="str">'1name'</span>.isidentifier()         <span class="cm"># False -> can't start with a digit</span></pre>
+      </div>
+      <p>"Criteria-testing" functions — each checks whether the whole string satisfies one specific rule.</p>
+    </div>
+  </details>
+
+  <!-- 17 -->
+  <details class="section" id="s13" open>
+    <summary><span class="s-num">13</span><span class="s-title">split() / join()</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="'hi my name is nitish'.split()          # ['hi', 'my', 'name', 'is', 'nitish']
+
+" ".join(['hi', 'my', 'name', 'is', 'nitish'])   # 'hi my name is nitish'">Copy</button>
+        <pre class="code"><span class="str">'hi my name is nitish'</span>.split()          <span class="cm"># ['hi', 'my', 'name', 'is', 'nitish']</span>
+
+<span class="str">" "</span>.join([<span class="str">'hi'</span>, <span class="str">'my'</span>, <span class="str">'name'</span>, <span class="str">'is'</span>, <span class="str">'nitish'</span>])   <span class="cm"># 'hi my name is nitish'</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Memory aid</div>
+        "<code>split</code> is for breaking apart, <code>join</code> is for putting together." <code>split()</code> defaults to breaking on whitespace but can split on any custom character. Swap the "glue" string in <code>join()</code> (e.g. <code>"-".join(...)</code>) to change how pieces get reconnected. Flagged as probably the single <b>most-used</b> string function of them all.
+      </div>
+    </div>
+  </details>
+
+  <!-- 18 -->
+  <details class="section" id="s14" open>
+    <summary><span class="s-num">14</span><span class="s-title">replace() / strip()</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="'hi my name is nitish'.replace('nitisrgewrhgh','campusx')
+# 'hi my name is nitish' -> no match found, nothing changes, no error
+
+'nitish                           '.strip()
+# 'nitish' -> trailing/leading whitespace removed">Copy</button>
+        <pre class="code"><span class="str">'hi my name is nitish'</span>.replace(<span class="str">'nitisrgewrhgh'</span>,<span class="str">'campusx'</span>)
+<span class="cm"># 'hi my name is nitish' -> no match found, nothing changes, no error</span>
+
+<span class="str">'nitish                           '</span>.strip()
+<span class="cm"># 'nitish' -> trailing/leading whitespace removed</span></pre>
+      </div>
+      <p><code>replace(old, new)</code> swaps a substring; searching for something that doesn't exist just leaves the string unchanged (no error, unlike <code>index()</code>). <code>strip()</code> is the real-world fix for the "extra spaces from a glitchy keyboard/copy-paste" problem — cleans up user-entered text before it hits a database.</p>
+    </div>
+  </details>
+
+  <!-- 19 Example Programs -->
+  <details class="section" id="s15" open>
+    <summary><span class="s-num">◆</span><span class="s-title">8 Worked Practice Programs (Supplementary Session)</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Class ran out of time before reaching these live, so the instructor recorded a short supplementary walkthrough covering exactly these — treat them as your core string practice set.</p>
+
+      <h4>1. String length without len()</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = input('enter the string')
+counter = 0
+for i in s:
+  counter += 1
+print('length of string is', counter)">Copy</button>
+        <pre class="code">s = input(<span class="str">'enter the string'</span>)
+counter = <span class="num">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> s:
+  counter += <span class="num">1</span>
+<span class="kw">print</span>(<span class="str">'length of string is'</span>, counter)</pre>
+      </div>
+      <p>Loop character by character, incrementing a counter — the same "counter variable" pattern from the very first day.</p>
+
+      <h4>2. Extract username from an email</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = input('enter the email')
+pos = s.index('@')
+print(s[0:pos])">Copy</button>
+        <pre class="code">s = input(<span class="str">'enter the email'</span>)
+pos = s.index(<span class="str">'@'</span>)
+<span class="kw">print</span>(s[<span class="num">0</span>:pos])</pre>
+      </div>
+      <p>Find the <code>@</code>'s position with <code>index()</code>, then slice everything before it. "The basic idea is just find the position of <code>@</code>, and then slice."</p>
+
+      <h4>3. Count frequency of a given character</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = input('enter the string')
+term = input('what would you like to search for')
+
+counter = 0
+for i in s:
+  if i == term:
+    counter += 1
+
+print('frequency', counter)">Copy</button>
+        <pre class="code">s = input(<span class="str">'enter the string'</span>)
+term = input(<span class="str">'what would you like to search for'</span>)
+
+counter = <span class="num">0</span>
+<span class="kw">for</span> i <span class="kw">in</span> s:
+  <span class="kw">if</span> i == term:
+    counter += <span class="num">1</span>
+
+<span class="kw">print</span>(<span class="str">'frequency'</span>, counter)</pre>
+      </div>
+
+      <h4>4. Remove a character from a string</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = input('enter the string')
+term = input('what would you like to remove')
+
+result = ''
+for i in s:
+  if i != term:
+    result = result + i
+
+print(result)">Copy</button>
+        <pre class="code">s = input(<span class="str">'enter the string'</span>)
+term = input(<span class="str">'what would you like to remove'</span>)
+
+result = <span class="str">''</span>
+<span class="kw">for</span> i <span class="kw">in</span> s:
+  <span class="kw">if</span> i != term:
+    result = result + i
+
+<span class="kw">print</span>(result)</pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Ties directly back to immutability</div>
+        Since strings can't be edited in place, "removing" a character really means <b>building a brand-new string</b> that skips it — start with an empty <code>result</code>, loop through the original, and only append characters that aren't the one to remove.
+      </div>
+
+      <h4>5. Palindrome check</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = input('enter the string')
+flag = True
+for i in range(0, len(s)//2):
+  if s[i] != s[len(s) - i - 1]:
+    flag = False
+    print('Not a Palindrome')
+    break
+
+if flag:
+  print('Palindrome')">Copy</button>
+        <pre class="code">s = input(<span class="str">'enter the string'</span>)
+flag = <span class="kw">True</span>
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">0</span>, len(s)//<span class="num">2</span>):
+  <span class="kw">if</span> s[i] != s[len(s) - i - <span class="num">1</span>]:
+    flag = <span class="kw">False</span>
+    <span class="kw">print</span>(<span class="str">'Not a Palindrome'</span>)
+    <span class="kw">break</span>
+
+<span class="kw">if</span> flag:
+  <span class="kw">print</span>(<span class="str">'Palindrome'</span>)</pre>
+      </div>
+      <p>Two-pointer idea: only loop to the <b>halfway</b> point, comparing character <code>i</code> from the front against its mirror <code>len(s)-i-1</code> from the back. A <code>flag</code> starts <code>True</code>; the moment a mismatch is found, flip it to <code>False</code>, announce it, and <code>break</code> immediately — no need to keep checking. If the loop finishes with the flag still <code>True</code>, it's a palindrome.</p>
+
+      <h4>6. Count words without split()</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = input('enter the string')
+L = []
+temp = ''
+for i in s:
+  if i != ' ':
+    temp = temp + i
+  else:
+    L.append(temp)
+    temp = ''
+
+L.append(temp)
+print(L)">Copy</button>
+        <pre class="code">s = input(<span class="str">'enter the string'</span>)
+L = []
+temp = <span class="str">''</span>
+<span class="kw">for</span> i <span class="kw">in</span> s:
+  <span class="kw">if</span> i != <span class="str">' '</span>:
+    temp = temp + i
+  <span class="kw">else</span>:
+    L.append(temp)
+    temp = <span class="str">''</span>
+
+L.append(temp)
+<span class="kw">print</span>(L)</pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Why the extra L.append(temp) after the loop</div>
+        Building the current word into <code>temp</code> character by character; hitting a space means the word is complete — push it to the list and reset <code>temp</code>. But the <b>very last word</b> never gets followed by a space, so the loop alone would drop it — hence one final <code>L.append(temp)</code> after the loop ends, to flush whatever's left.
+      </div>
+
+      <h4>7. Convert to title case, without title()</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="s = input('enter the string')
+
+L = []
+for i in s.split():
+  L.append(i[0].upper() + i[1:].lower())
+
+print(" ".join(L))">Copy</button>
+        <pre class="code">s = input(<span class="str">'enter the string'</span>)
+
+L = []
+<span class="kw">for</span> i <span class="kw">in</span> s.split():
+  L.append(i[<span class="num">0</span>].upper() + i[<span class="num">1</span>:].lower())
+
+<span class="kw">print</span>(<span class="str">" "</span>.join(L))</pre>
+      </div>
+      <p>For each word: capitalize just the first character (<code>i[0].upper()</code>) and lowercase everything after it (<code>i[1:].lower()</code>), then glue the words back together with <code>join()</code>.</p>
+
+      <h4>8. Convert an integer to a string, without str()</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="number = int(input('enter the number'))
+
+digits = '0123456789'
+result = ''
+while number != 0:
+  result = digits[number % 10] + result
+  number = number//10
+
+print(result)
+print(type(result))">Copy</button>
+        <pre class="code">number = <span class="kw">int</span>(input(<span class="str">'enter the number'</span>))
+
+digits = <span class="str">'0123456789'</span>
+result = <span class="str">''</span>
+<span class="kw">while</span> number != <span class="num">0</span>:
+  result = digits[number % <span class="num">10</span>] + result
+  number = number//<span class="num">10</span>
+
+<span class="kw">print</span>(result)
+<span class="kw">print</span>(<span class="kw">type</span>(result))</pre>
+      </div>
+      <div class="out">enter the number <span style="opacity:.6">345</span><br/>345<br/>&lt;class 'str'&gt;</div>
+      <div class="callout remember">
+        <div class="cal-head">★ Same digit-extraction trick from Session 2, now producing a string</div>
+        <code>digits</code> is a lookup string holding every possible digit character at its matching index. <code>number % 10</code> extracts the last digit as an int, and <code>digits[...]</code> converts that int into its character form — <b>prepended</b> to <code>result</code> (not appended!) since digits come out last-to-first. <code>number // 10</code> shrinks the number each round, same as the sum-of-digits program.
+      </div>
+    </div>
+  </details>
+
+  <!-- 20 Cheat sheet -->
+  <details class="section" id="s16" open>
+    <summary><span class="s-num">★</span><span class="s-title">60-Second Cheat Sheet</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="cheat-grid">
+        <div class="cheat-card"><h5>Nested loops</h5><p>Inner loop runs fully before outer loop advances — Cartesian-product shape</p></div>
+        <div class="cheat-card"><h5>Pattern trick</h5><p>Solve the ascending half first; descending starts at i-1, step -1</p></div>
+        <div class="cheat-card"><h5>break vs continue</h5><p>break = stop the whole loop · continue = skip just this round</p></div>
+        <div class="cheat-card"><h5>for…else</h5><p>else runs only if the loop finished WITHOUT a break</p></div>
+        <div class="cheat-card"><h5>Unicode</h5><p>Python strings are Unicode, not ASCII — handles any language + emoji</p></div>
+        <div class="cheat-card"><h5>Negative-step slicing</h5><p>First index must be bigger than the second, or you get nothing</p></div>
+        <div class="cheat-card"><h5>Reverse a string</h5><p><code>s[::-1]</code> — the famous one-liner</p></div>
+        <div class="cheat-card"><h5>Immutable</h5><p>No item assignment, no item deletion — every "change" makes a new string</p></div>
+        <div class="cheat-card"><h5>and / or on strings</h5><p>and → 2nd operand (if both truthy) · or → 1st operand (if truthy)</p></div>
+        <div class="cheat-card"><h5>find vs index</h5><p>find → -1 if missing · index → raises ValueError</p></div>
+        <div class="cheat-card"><h5>split / join</h5><p>split breaks apart · join glues back together</p></div>
+        <div class="cheat-card"><h5>format()</h5><p>{0}/{1} = argument position, independent of template order</p></div>
+      </div>
+    </div>
+  </details>
+
+  <footer>Built from the CampusX Session 3 + Supplementary transcripts and class notebook · keep this open while you revise</footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.getAttribute('data-copy') || '';
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(function(){ btn.textContent = old; }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){
+          fallbackCopy(text); done();
+        });
+      } else {
+        fallbackCopy(text); done();
+      }
+    });
+  });
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  }
+</script>

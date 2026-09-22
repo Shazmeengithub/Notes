@@ -1,0 +1,1012 @@
+<title>Python Lists</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg:#F4F6F5; --surface:#FFFFFF; --surface-2:#ECF1EE;
+    --ink:#16241F; --ink-soft:#4B5D57; --border:#D7E0DB;
+    --accent:#0E7C66; --accent-soft:#DCEFE8;
+    --accent-2:#C67F0E; --accent-2-soft:#FBEBD2;
+    --danger:#B8453A; --danger-soft:#F8E3DF;
+    --interview:#5551C9; --interview-soft:#E7E7FA;
+    --code-bg:#12201B; --code-ink:#BEF6DC; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#6E8079; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(20,40,35,.07), 0 10px 28px rgba(20,40,35,.08);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+      --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+      --accent:#3FCFA3; --accent-soft:#153228;
+      --accent-2:#F0B84D; --accent-2-soft:#33291A;
+      --danger:#E28074; --danger-soft:#3A211E;
+      --interview:#ABABF7; --interview-soft:#231F3D;
+      --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0B1512; --surface:#112019; --surface-2:#16261F;
+    --ink:#E7EFEA; --ink-soft:#9FB5AC; --border:#23342C;
+    --accent:#3FCFA3; --accent-soft:#153228;
+    --accent-2:#F0B84D; --accent-2-soft:#33291A;
+    --danger:#E28074; --danger-soft:#3A211E;
+    --interview:#ABABF7; --interview-soft:#231F3D;
+    --code-bg:#0B1714; --code-ink:#A6F3D0; --code-kw:#F0B84D; --code-str:#7FD8C4; --code-cm:#65796F; --code-num:#8FC6FF;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 28px rgba(0,0,0,.35);
+    color-scheme:dark;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'Work Sans', system-ui, sans-serif;
+    padding-inline:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Fraunces', Georgia, serif; text-wrap:balance; margin:0; }
+  a{ color:var(--accent); }
+  .wrap{ max-width:760px; margin:0 auto; padding-block:28px 80px; }
+
+  /* Header */
+  .hero{
+    background:linear-gradient(155deg, var(--surface) 0%, var(--surface-2) 100%);
+    border:1px solid var(--border); border-radius:20px;
+    padding:28px 26px; box-shadow:var(--shadow); margin-bottom:18px;
+    position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-40px; top:-40px; width:160px; height:160px;
+    background:var(--accent-soft); border-radius:50%; opacity:.7; z-index:0;
+  }
+  .hero-inner{ position:relative; z-index:1; }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px;
+    font-size:12.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--accent); background:var(--accent-soft);
+    padding:5px 11px; border-radius:100px; margin-bottom:12px;
+  }
+  .hero h1{ font-size:clamp(28px,6vw,40px); font-weight:700; line-height:1.08; }
+  .hero p.sub{ margin:10px 0 0; color:var(--ink-soft); font-size:15.5px; max-width:52ch; }
+  .meta-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .meta-chip{
+    font-size:12.5px; font-weight:600; color:var(--ink-soft);
+    background:var(--surface); border:1px solid var(--border); border-radius:8px;
+    padding:5px 10px; font-family:'JetBrains Mono',monospace;
+  }
+
+  /* TOC */
+  .toc{
+    display:flex; gap:8px; overflow-x:auto; padding:4px 2px 14px;
+    margin-bottom:6px; scrollbar-width:thin;
+  }
+  .toc a{
+    flex:0 0 auto; text-decoration:none; font-size:13px; font-weight:600;
+    color:var(--ink-soft); background:var(--surface); border:1px solid var(--border);
+    padding:7px 13px; border-radius:100px; white-space:nowrap;
+  }
+  .toc a span{ color:var(--accent); font-family:'JetBrains Mono',monospace; margin-right:5px; }
+
+  /* Legend */
+  .legend{ display:flex; flex-wrap:wrap; gap:8px; margin:6px 0 22px; }
+  .tag{
+    font-size:11.5px; font-weight:700; letter-spacing:.02em;
+    padding:4px 10px; border-radius:7px; display:inline-flex; align-items:center; gap:5px;
+  }
+  .tag.remember{ background:var(--accent-2-soft); color:var(--accent-2); }
+  .tag.gotcha{ background:var(--danger-soft); color:var(--danger); }
+  .tag.interview{ background:var(--interview-soft); color:var(--interview); }
+  .tag.concept{ background:var(--accent-soft); color:var(--accent); }
+
+  /* Sections */
+  details.section{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    margin-bottom:14px; box-shadow:var(--shadow); overflow:hidden;
+  }
+  details.section > summary{
+    list-style:none; cursor:pointer; padding:18px 20px;
+    display:flex; align-items:center; gap:13px; user-select:none;
+  }
+  details.section > summary::-webkit-details-marker{ display:none; }
+  .s-num{
+    flex:0 0 auto; width:34px; height:34px; border-radius:10px;
+    background:var(--accent-soft); color:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono',monospace; font-weight:700; font-size:13.5px;
+  }
+  .s-title{ font-family:'Fraunces',serif; font-weight:600; font-size:19px; flex:1 1 auto; }
+  .chev{ color:var(--ink-soft); transition:transform .2s ease; flex:0 0 auto; }
+  details[open] > summary .chev{ transform:rotate(90deg); }
+  .s-body{ padding:0 20px 22px; }
+  .s-body > *:first-child{ margin-top:0; }
+  .s-body p{ line-height:1.65; color:var(--ink); font-size:15px; margin:0 0 12px; }
+  .s-body h4{ font-family:'Work Sans',sans-serif; font-size:14.5px; font-weight:700; margin:18px 0 8px; color:var(--ink); }
+  .s-body ul, .s-body ol{ margin:0 0 12px; padding-left:22px; line-height:1.65; font-size:15px; }
+  .s-body li{ margin-bottom:5px; }
+  .quote{
+    font-family:'Fraunces',serif; font-style:italic; font-size:15.5px;
+    color:var(--ink-soft); border-left:3px solid var(--accent);
+    padding:2px 0 2px 14px; margin:12px 0;
+  }
+
+  /* Callouts */
+  .callout{
+    border-radius:12px; padding:13px 15px; margin:14px 0; font-size:14.5px; line-height:1.6;
+    border:1px solid transparent;
+  }
+  .callout .cal-head{ font-weight:700; font-size:12.5px; text-transform:uppercase; letter-spacing:.05em; margin-bottom:5px; display:flex; align-items:center; gap:6px; }
+  .callout.remember{ background:var(--accent-2-soft); color:var(--ink); border-color:color-mix(in srgb, var(--accent-2) 30%, transparent); }
+  .callout.remember .cal-head{ color:var(--accent-2); }
+  .callout.gotcha{ background:var(--danger-soft); color:var(--ink); border-color:color-mix(in srgb, var(--danger) 30%, transparent); }
+  .callout.gotcha .cal-head{ color:var(--danger); }
+  .callout.interview{ background:var(--interview-soft); color:var(--ink); border-color:color-mix(in srgb, var(--interview) 30%, transparent); }
+  .callout.interview .cal-head{ color:var(--interview); }
+
+  /* Code blocks */
+  .code-wrap{ position:relative; margin:12px 0; border-radius:12px; overflow:hidden; box-shadow:var(--shadow); }
+  pre.code{
+    background:var(--code-bg); color:var(--code-ink); margin:0; padding:14px 44px 14px 16px;
+    font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.6;
+    overflow-x:auto; white-space:pre;
+  }
+  pre.code .kw{ color:var(--code-kw); }
+  pre.code .str{ color:var(--code-str); }
+  pre.code .cm{ color:var(--code-cm); }
+  pre.code .num{ color:var(--code-num); }
+  .copy-btn{
+    position:absolute; top:8px; right:8px; background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.18); color:#cfe9df; border-radius:7px;
+    font-family:'Work Sans',sans-serif; font-size:11px; font-weight:600;
+    padding:5px 9px; cursor:pointer;
+  }
+  .copy-btn:hover{ background:rgba(255,255,255,.16); }
+  .out{
+    background:var(--surface-2); border:1px dashed var(--border); border-radius:10px;
+    padding:9px 13px; font-family:'JetBrains Mono',monospace; font-size:12.5px;
+    color:var(--ink-soft); margin:-4px 0 12px;
+  }
+  .out b{ color:var(--ink); font-weight:600; }
+
+  /* Table */
+  .tbl-wrap{ overflow-x:auto; margin:14px 0; border-radius:12px; border:1px solid var(--border); }
+  table{ border-collapse:collapse; width:100%; font-size:13.5px; min-width:480px; }
+  th{
+    background:var(--surface-2); text-align:left; padding:9px 12px; font-weight:700;
+    color:var(--ink); border-bottom:1px solid var(--border); white-space:nowrap;
+  }
+  td{ padding:9px 12px; border-bottom:1px solid var(--border); color:var(--ink); vertical-align:top; }
+  tr:last-child td{ border-bottom:none; }
+  td code, li code, p code{
+    font-family:'JetBrains Mono',monospace; background:var(--surface-2); padding:1px 6px;
+    border-radius:5px; font-size:.92em; color:var(--accent);
+  }
+
+  /* Diagram */
+  .diagram{ background:var(--surface-2); border:1px solid var(--border); border-radius:14px; padding:16px; margin:14px 0; overflow-x:auto; }
+  .diagram svg{ display:block; margin:0 auto; min-width:520px; }
+  .diagram figcaption{ text-align:center; font-size:12.5px; color:var(--ink-soft); margin-top:8px; }
+
+  /* Cheat sheet grid */
+  .cheat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:10px; margin:14px 0; }
+  .cheat-card{
+    background:var(--surface-2); border:1px solid var(--border); border-radius:12px; padding:13px 14px;
+  }
+  .cheat-card h5{ margin:0 0 6px; font-size:13px; font-family:'JetBrains Mono',monospace; color:var(--accent); font-weight:700; }
+  .cheat-card p{ margin:0; font-size:13px; color:var(--ink-soft); line-height:1.55; }
+
+  footer{ text-align:center; color:var(--ink-soft); font-size:12.5px; margin-top:26px; }
+
+  @media (max-width:480px){
+    .s-title{ font-size:17px; }
+    .hero h1{ font-size:26px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="eyebrow">● CampusX &nbsp;·&nbsp; 100 Days of ML &nbsp;·&nbsp; Week 2</span>
+      <h1>Python Lists</h1>
+      <p class="sub">Complete revision notes from the live session — how lists work under the hood, every operation, and the traps that catch beginners. Built to scan fast and stick.</p>
+      <div class="meta-row">
+        <span class="meta-chip">18 sections</span>
+        <span class="meta-chip">most important Python data type</span>
+        <span class="meta-chip">source: transcript + class notebook</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span class="tag remember">★ Remember</span>
+    <span class="tag gotcha">⚠ Gotcha</span>
+    <span class="tag interview">◆ Interview</span>
+    <span class="tag concept">● Core idea</span>
+  </div>
+
+  <nav class="toc" aria-label="Table of contents">
+    <a href="#s1"><span>01</span>What is a List</a>
+    <a href="#s2"><span>02</span>List vs Array</a>
+    <a href="#s3"><span>03</span>Memory Model</a>
+    <a href="#s4"><span>04</span>Characteristics</a>
+    <a href="#s5"><span>05</span>Creating Lists</a>
+    <a href="#s6"><span>06</span>Indexing &amp; Slicing</a>
+    <a href="#s7"><span>07</span>Adding Items</a>
+    <a href="#s8"><span>08</span>Editing Items</a>
+    <a href="#s9"><span>09</span>Deleting Items</a>
+    <a href="#s10"><span>10</span>Operations</a>
+    <a href="#s11"><span>11</span>Built-in Functions</a>
+    <a href="#s12"><span>12</span>List Comprehension</a>
+    <a href="#s13"><span>13</span>Traversal</a>
+    <a href="#s14"><span>14</span>zip()</a>
+    <a href="#s15"><span>15</span>Disadvantages &amp; Gotcha</a>
+    <a href="#s15b"><span>◆</span>Practice Problems</a>
+    <a href="#s16"><span>★</span>Cheat Sheet</a>
+  </nav>
+
+  <!-- 1 -->
+  <details class="section" id="s1" open>
+    <summary><span class="s-num">01</span><span class="s-title">What is a List?</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p><span class="tag concept">Core idea</span></p>
+      <p>A <b>list</b> is a data type where you can store <b>multiple items under one name</b>. Lists act like <b>dynamic arrays</b> — you can add more items on the fly, with no upper limit.</p>
+      <div class="quote">"Comma-separated items within a square bracket. Whenever you see something like that in Python, you call it a list."</div>
+      <h4>Why do we even need lists? — the movie review example</h4>
+      <p>Say you're doing sentiment analysis on <b>10,000 movie reviews</b>. You would never store each review in its own variable — that wastes memory, and processing becomes painful (e.g. "lowercase every review" would mean visiting each variable one by one).</p>
+      <p>Since all 10,000 reviews are "one kind of thing", you store them together in a <b>list</b> and just loop over it. Rule of thumb: whenever you're handling many items of generally the same type, reach for a list.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="reviews = ['Amazing movie!', 'Waste of time', 'Loved the plot']
+
+# instead of review_1, review_2, review_3 ...
+for r in reviews:
+    print(r.lower())">Copy</button>
+        <pre class="code"><span class="cm"># instead of review_1, review_2, review_3 ...</span>
+reviews = [<span class="str">'Amazing movie!'</span>, <span class="str">'Waste of time'</span>, <span class="str">'Loved the plot'</span>]
+
+<span class="kw">for</span> r <span class="kw">in</span> reviews:
+    <span class="kw">print</span>(r.lower())</pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- 2 -->
+  <details class="section" id="s2" open>
+    <summary><span class="s-num">02</span><span class="s-title">List vs Array — 2 wins, 2 costs</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Lists aren't new — other languages (C, C++, Java) have <b>arrays</b> that do a similar job. They look similar but are <b>not the same</b>. Four differences to know cold:</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th></th><th>Array</th><th>Python List</th></tr>
+          <tr><td><b>Size</b></td><td>Fixed — declared upfront (<code>int arr[50]</code>)</td><td>Dynamic — grows on the fly, no limit</td></tr>
+          <tr><td><b>Types stored</b></td><td>Homogeneous — one data type only</td><td>Heterogeneous — mix any data types</td></tr>
+          <tr><td><b>Speed</b></td><td>Faster</td><td>Slower ⚠</td></tr>
+          <tr><td><b>Memory use</b></td><td>Less</td><td>More ⚠</td></tr>
+        </table>
+      </div>
+      <p>So: <b>2 advantages</b> of lists (flexibility, convenience/heterogeneity) come at the cost of <b>2 disadvantages</b> (slower, more memory) — and section 03 explains exactly why.</p>
+
+      <h4>How a fixed array wastes space</h4>
+      <p><code>int arr[50]</code> reserves 50 memory blocks upfront. If you only ever need 10, the other 40 are wasted.</p>
+
+      <h4>★ How dynamic arrays grow (the doubling mechanism)</h4>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember — this is THE mechanism behind "lists have no size limit"</div>
+        You start with a small fixed-size array. You keep adding items. The instant it's full, Python secretly creates a <b>brand new array of double the size</b>, <b>copies</b> every old item across (1st→1st, 2nd→2nd, 3rd→3rd…), and then drops the new item in. When <i>that</i> fills up too, the whole "double + copy" cycle repeats — forever. That's why a list feels limitless.
+      </div>
+      <p>Doubling isn't mandatory — you could grow by a fixed amount (say +10) each time instead; it's an implementation choice. This copy-and-grow cost is also <b>why lists are slower and heavier</b> than arrays (see section 03).</p>
+      <div class="callout interview">
+        <div class="cal-head">◆ Interview / good-to-know</div>
+        NumPy arrays are <b>not</b> "lists under the hood" — NumPy exists precisely <i>because</i> Python's built-in list is slow and memory-heavy for numeric work.
+      </div>
+    </div>
+  </details>
+
+  <!-- 3 -->
+  <details class="section" id="s3" open>
+    <summary><span class="s-num">03</span><span class="s-title">The Memory Model — why lists behave this way</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>This one explanation unlocks <i>all four</i> differences from section 02. Once you get this, everything else about lists starts making sense.</p>
+
+      <h4>How an array is stored — contiguous, direct</h4>
+      <p>Values are packed back-to-back in memory as raw binary. The array's own "address" is simply the address of its first value.</p>
+      <div class="diagram">
+        <svg viewBox="0 0 560 120" xmlns="http://www.w3.org/2000/svg">
+          <text x="10" y="18" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--ink-soft)">contiguous memory block</text>
+          <g font-family="JetBrains Mono, monospace" font-size="13">
+            <rect x="10" y="30" width="120" height="46" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="70" y="58" text-anchor="middle" fill="var(--ink)">1</text>
+            <rect x="140" y="30" width="120" height="46" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="200" y="58" text-anchor="middle" fill="var(--ink)">2</text>
+            <rect x="270" y="30" width="120" height="46" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="330" y="58" text-anchor="middle" fill="var(--ink)">3</text>
+            <rect x="400" y="30" width="120" height="46" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="460" y="58" text-anchor="middle" fill="var(--ink)">4</text>
+          </g>
+          <text x="70" y="94" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--ink-soft)">addr = base</text>
+          <text x="330" y="94" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--ink-soft)">values stored directly</text>
+        </svg>
+      </div>
+
+      <h4>How a Python list is stored — the Referential Array</h4>
+      <p>A list does <b>not</b> store values directly. Its cells store <b>addresses (references / pointers)</b> that point to where the real objects live elsewhere in memory.</p>
+      <div class="diagram">
+        <svg viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg">
+          <text x="10" y="16" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--ink-soft)">the list's own cells (addresses 1001–1003)</text>
+          <g font-family="JetBrains Mono, monospace" font-size="12.5">
+            <rect x="10" y="26" width="150" height="42" rx="8" fill="var(--interview-soft)" stroke="var(--interview)"/>
+            <text x="85" y="43" text-anchor="middle" fill="var(--ink-soft)" font-size="10">1001</text>
+            <text x="85" y="60" text-anchor="middle" fill="var(--ink)">→ 500</text>
+
+            <rect x="205" y="26" width="150" height="42" rx="8" fill="var(--interview-soft)" stroke="var(--interview)"/>
+            <text x="280" y="43" text-anchor="middle" fill="var(--ink-soft)" font-size="10">1002</text>
+            <text x="280" y="60" text-anchor="middle" fill="var(--ink)">→ 600</text>
+
+            <rect x="400" y="26" width="150" height="42" rx="8" fill="var(--interview-soft)" stroke="var(--interview)"/>
+            <text x="475" y="43" text-anchor="middle" fill="var(--ink-soft)" font-size="10">1003</text>
+            <text x="475" y="60" text-anchor="middle" fill="var(--ink)">→ 700</text>
+          </g>
+          <path d="M85 68 L85 130" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#arr)"/>
+          <path d="M280 68 L280 130" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#arr)"/>
+          <path d="M475 68 L475 130" stroke="var(--ink-soft)" stroke-width="1.5" marker-end="url(#arr)"/>
+          <defs>
+            <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 Z" fill="var(--ink-soft)"/>
+            </marker>
+          </defs>
+          <text x="10" y="150" font-family="JetBrains Mono, monospace" font-size="11" fill="var(--ink-soft)">the actual objects, scattered elsewhere</text>
+          <g font-family="JetBrains Mono, monospace" font-size="12.5">
+            <rect x="10" y="158" width="150" height="42" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="85" y="175" text-anchor="middle" fill="var(--ink-soft)" font-size="10">addr 500</text>
+            <text x="85" y="192" text-anchor="middle" fill="var(--ink)">1</text>
+
+            <rect x="205" y="158" width="150" height="42" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="280" y="175" text-anchor="middle" fill="var(--ink-soft)" font-size="10">addr 600</text>
+            <text x="280" y="192" text-anchor="middle" fill="var(--ink)">2</text>
+
+            <rect x="400" y="158" width="150" height="42" rx="8" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="475" y="175" text-anchor="middle" fill="var(--ink-soft)" font-size="10">addr 700</text>
+            <text x="475" y="192" text-anchor="middle" fill="var(--ink)">3</text>
+          </g>
+        </svg>
+        <figcaption><code>l = [1, 2, 3]</code> — the list stores addresses 500 / 600 / 700, not the numbers themselves</figcaption>
+      </div>
+
+      <h4>Proving it live with <code>id()</code></h4>
+      <p><code>id(x)</code> prints the memory address of <code>x</code>.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="L = [1, 2, 3]
+
+print(id(L))
+print(id(L[0]))
+print(id(L[1]))
+print(id(L[2]))
+print(id(1))
+print(id(2))
+print(id(3))">Copy</button>
+        <pre class="code">L = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+
+<span class="kw">print</span>(id(L))
+<span class="kw">print</span>(id(L[<span class="num">0</span>]))
+<span class="kw">print</span>(id(L[<span class="num">1</span>]))
+<span class="kw">print</span>(id(L[<span class="num">2</span>]))
+<span class="kw">print</span>(id(<span class="num">1</span>))
+<span class="kw">print</span>(id(<span class="num">2</span>))
+<span class="kw">print</span>(id(<span class="num">3</span>))</pre>
+      </div>
+      <div class="out">140163201133<b>376</b>   <span style="opacity:.6">← id(L) itself, unrelated to the values</span><br/>
+      11126<b>688</b><br/>11126<b>720</b><br/>11126<b>752</b><br/>
+      11126<b>688</b>  <span style="opacity:.6">← id(1), matches id(L[0])!</span><br/>
+      11126<b>720</b>  <span style="opacity:.6">← id(2), matches id(L[1])!</span><br/>
+      11126<b>752</b>  <span style="opacity:.6">← id(3), matches id(L[2])!</span></div>
+      <p>Real output from the class notebook: <code>id(L[0])</code>, <code>id(L[1])</code>, <code>id(L[2])</code> line up exactly with <code>id(1)</code>, <code>id(2)</code>, <code>id(3)</code>. The list cell doesn't hold <code>1</code> — it holds the address <i>of</i> <code>1</code>.</p>
+
+      <h4>Why this design gives heterogeneity — and its cost</h4>
+      <p>Because a list stores <b>addresses</b>, not values, it doesn't care what type of thing an address points to — an int's address, a string's address, a float's address, all fit the same slot. Swap one address for a pointer to a character, and the list instantly holds mixed types.</p>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Gotcha — the trade-off</div>
+        This referencing costs <b>extra space</b> (you store an address <i>and</i> the real object elsewhere) and <b>extra time</b> (fetching an item means: go to the list → read the address → jump to that address in memory). Combined with the doubling-copy cost from section 02, this is exactly why lists are <b>slower and heavier</b> than arrays — and exactly why they're more <b>flexible and convenient</b>.
+      </div>
+    </div>
+  </details>
+
+  <!-- 4 -->
+  <details class="section" id="s4" open>
+    <summary><span class="s-num">04</span><span class="s-title">Characteristics of Lists</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Eight properties worth knowing by heart.</p>
+      <ol>
+        <li><b>Order matters.</b> <code>[1,2,3]</code> and <code>[3,2,1]</code> are <b>not</b> the same list, even though they hold identical items — the ordering is different.</li>
+        <li><b>Mutable.</b> You can change items after creation (e.g. <code>l[0] = 100</code>).</li>
+        <li><b>Heterogeneous.</b> Mixed data types allowed in one list.</li>
+        <li><b>Duplicates allowed.</b> No uniqueness constraint.</li>
+        <li><b>Dynamic.</b> Grows automatically as you add items.</li>
+        <li><b>Can be nested.</b> A list can contain another list (2D, 3D, …).</li>
+        <li><b>Accessible via indexing &amp; slicing</b> — just like strings.</li>
+        <li><b>Can hold <i>any</i> kind of Python object</b> — even functions!</li>
+      </ol>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember — point 8, the one everyone forgets</div>
+        Because <i>everything in Python is an object</i>, a list can store literally anything — including built-in functions themselves, not just their results.
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="L = [1, 2, print, type, input]
+print(L)
+# [1, 2, <built-in function print>, <class 'type'>, <bound method ... input>]
+# no error — the list holds the print/type/input function objects directly">Copy</button>
+        <pre class="code">L = [<span class="num">1</span>, <span class="num">2</span>, <span class="kw">print</span>, <span class="kw">type</span>, <span class="kw">input</span>]
+<span class="kw">print</span>(L)
+<span class="cm"># [1, 2, &lt;built-in function print&gt;, &lt;class 'type'&gt;, &lt;bound method ... input&gt;]</span>
+<span class="cm"># no error — the list holds the print/type/input function objects directly</span></pre>
+      </div>
+      <p>Once you learn OOP, this extends to your own custom classes and functions too — same trick.</p>
+    </div>
+  </details>
+
+  <!-- 5 -->
+  <details class="section" id="s5" open>
+    <summary><span class="s-num">05</span><span class="s-title">Creating Lists</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="print([])                                          # Empty
+print([1,2,3,4,5])                                # 1D -> Homo
+print([1,2,3,[4,5]])                              # 2D
+print([[[1,2],[3,4]],[[5,6],[7,8]]])              # 3D
+print([1,True,5.6,5+6j,'Hello'])                  # Hetrogenous
+print(list('hello'))                              # Using Type conversion">Copy</button>
+        <pre class="code"><span class="kw">print</span>([])                                          <span class="cm"># Empty</span>
+<span class="kw">print</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>])                                <span class="cm"># 1D -> Homo</span>
+<span class="kw">print</span>([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,[<span class="num">4</span>,<span class="num">5</span>]])                              <span class="cm"># 2D</span>
+<span class="kw">print</span>([[[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]],[[<span class="num">5</span>,<span class="num">6</span>],[<span class="num">7</span>,<span class="num">8</span>]]])              <span class="cm"># 3D</span>
+<span class="kw">print</span>([<span class="num">1</span>,<span class="kw">True</span>,<span class="num">5.6</span>,<span class="num">5</span>+<span class="num">6</span>j,<span class="str">'Hello'</span>])                  <span class="cm"># Hetrogenous</span>
+<span class="kw">print</span>(<span class="kw">list</span>(<span class="str">'hello'</span>))                              <span class="cm"># Using Type conversion</span></pre>
+      </div>
+      <div class="out">[]<br/>[1, 2, 3, 4, 5]<br/>[1, 2, 3, [4, 5]]<br/>[[[1, 2], [3, 4]], [[5, 6], [7, 8]]]<br/><b>[1, True, 5.6, (5+6j), 'Hello']</b><br/>['h', 'e', 'l', 'l', 'o']</div>
+      <p><code>True</code> is just another object Python can point to — that's why it slots into a heterogeneous list next to a float and a complex number without complaint.</p>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember — two easy-to-miss traps</div>
+        <b>Dimensionality trick:</b> count opening brackets from the outside — as many brackets open together, that many dimensions the list has.<br/><br/>
+        <b>Homogeneous vs heterogeneous trick:</b> only look at what's <i>inside the outermost bracket</i>. <code>[1,2,3,[4,5]]</code> has 4 top-level items (3 ints + 1 list) → <b>heterogeneous</b>. But a 3D list like <code>[[[1,2],[3,4]], [[5,6],[7,8]]]</code> has only 2 top-level items and both are 2D lists (same type) → <b>homogeneous</b>, even though it "looks" complicated.
+      </div>
+    </div>
+  </details>
+
+  <!-- 6 -->
+  <details class="section" id="s6" open>
+    <summary><span class="s-num">06</span><span class="s-title">Accessing Items — Indexing &amp; Slicing</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Works <b>exactly</b> like strings — same rules, same syntax.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Type</th><th>Direction</th><th>Starts at</th><th>Example (<code>l=[1,2,3,4,5]</code>)</th></tr>
+          <tr><td>Positive indexing</td><td>left → right</td><td><code>0</code></td><td><code>l[0]</code> → <code>1</code></td></tr>
+          <tr><td>Negative indexing</td><td>right → left</td><td><code>-1</code></td><td><code>l[-1]</code> → <code>5</code>, <code>l[-3]</code> → <code>3</code></td></tr>
+        </table>
+      </div>
+      <p>Out-of-range index → <code>IndexError: list index out of range</code>.</p>
+
+      <h4>Indexing into nested (2D/3D) lists</h4>
+      <p><b>Rule: use as many square brackets as the list has dimensions.</b></p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="l = [1, 2, 3, [4, 5]]
+l[-1]        # [4, 5]  -> whole inner list, not what we wanted
+l[-1][-2]    # 4       -> go one level deeper
+l[3][0]      # 4       -> same result via positive indexing">Copy</button>
+        <pre class="code">l = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, [<span class="num">4</span>, <span class="num">5</span>]]
+l[<span class="num">-1</span>]        <span class="cm"># [4, 5]  -> whole inner list, not what we wanted</span>
+l[<span class="num">-1</span>][<span class="num">-2</span>]    <span class="cm"># 4       -> go one level deeper</span>
+l[<span class="num">3</span>][<span class="num">0</span>]      <span class="cm"># 4       -> same result via positive indexing</span></pre>
+      </div>
+
+      <h4>Slicing — grab many items at once</h4>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Goal</th><th>Syntax</th></tr>
+          <tr><td>First 3 items</td><td><code>l[0:3]</code></td></tr>
+          <tr><td>Last 3 items</td><td><code>l[-3:]</code></td></tr>
+          <tr><td>Every alternate item</td><td><code>l[::2]</code></td></tr>
+          <tr><td>Alternate items in a range</td><td><code>l[-5:-2:2]</code></td></tr>
+          <tr><td><b>Reverse the whole list</b></td><td><code>l[::-1]</code></td></tr>
+        </table>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember</div>
+        Stop index in slicing is <b>never inclusive</b>. And <code>l[::-1]</code> for reversing works identically to strings — once a pattern clicks for one sequence type, it works the same everywhere in Python.
+      </div>
+    </div>
+  </details>
+
+  <!-- 7 -->
+  <details class="section" id="s7" open>
+    <summary><span class="s-num">07</span><span class="s-title">Adding Items — append / extend / insert</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Method</th><th>Adds</th><th>Where</th></tr>
+          <tr><td><code>append(x)</code></td><td>exactly <b>one</b> item</td><td>at the end</td></tr>
+          <tr><td><code>extend(iterable)</code></td><td><b>multiple</b> items</td><td>at the end</td></tr>
+          <tr><td><code>insert(i, x)</code></td><td>one item</td><td>at index <code>i</code> — anywhere</td></tr>
+        </table>
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Gotcha — a classic MCQ trap</div>
+        <code>l.append([6,7,8])</code> adds the whole list as <b>one nested item</b> (list gets longer by 1). <code>l.extend("Delhi")</code> breaks the string into characters and adds <b>each one separately</b> (list gets longer by 5) — because <code>extend</code> always tries to add multiple items, even from something that looks like "one thing".
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="L = [1,2,3,4,5]
+L.append(True)
+print(L)          # [1, 2, 3, 4, 5, True]
+
+L = [1,2,3,4,5]
+L.extend([6,7,8])
+print(L)          # [1, 2, 3, 4, 5, 6, 7, 8]
+
+L = [1,2,3,4,5]
+L.append([6,7,8])
+print(L)          # [1, 2, 3, 4, 5, [6, 7, 8]]   <- nested, ONE item added
+
+L = [1,2,3,4,5]
+L.extend('delhi')
+print(L)          # [1, 2, 3, 4, 5, 'd','e','l','h','i']  <- FIVE items added
+
+L = [1,2,3,4,5]
+L.insert(1,100)
+print(L)          # [1, 100, 2, 3, 4, 5]">Copy</button>
+        <pre class="code">L = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+L.append(<span class="kw">True</span>)
+<span class="kw">print</span>(L)          <span class="cm"># [1, 2, 3, 4, 5, True]</span>
+
+L = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+L.extend([<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>])
+<span class="kw">print</span>(L)          <span class="cm"># [1, 2, 3, 4, 5, 6, 7, 8]</span>
+
+L = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+L.append([<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>])
+<span class="kw">print</span>(L)          <span class="cm"># [1, 2, 3, 4, 5, [6, 7, 8]]   <- nested, ONE item added</span>
+
+L = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+L.extend(<span class="str">'delhi'</span>)
+<span class="kw">print</span>(L)          <span class="cm"># [1, 2, 3, 4, 5, 'd','e','l','h','i']  <- FIVE items added</span>
+
+L = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+L.insert(<span class="num">1</span>,<span class="num">100</span>)
+<span class="kw">print</span>(L)          <span class="cm"># [1, 100, 2, 3, 4, 5]</span></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- 8 -->
+  <details class="section" id="s8" open>
+    <summary><span class="s-num">08</span><span class="s-title">Editing Items</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Unlike strings (immutable), lists support mutation directly.</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="l = [1, 2, 3, 4, 5]
+l[-1] = 500          # edit one item via indexing
+l[1:4] = [200, 300, 400]   # edit multiple items via slicing">Copy</button>
+        <pre class="code">l = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>]
+l[<span class="num">-1</span>] = <span class="num">500</span>          <span class="cm"># edit one item via indexing</span>
+l[<span class="num">1</span>:<span class="num">4</span>] = [<span class="num">200</span>, <span class="num">300</span>, <span class="num">400</span>]   <span class="cm"># edit multiple items via slicing</span></pre>
+      </div>
+    </div>
+  </details>
+
+  <!-- 9 -->
+  <details class="section" id="s9" open>
+    <summary><span class="s-num">09</span><span class="s-title">Deleting Items — del / remove / pop / clear</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Method</th><th>Deletes by</th><th>Notes</th></tr>
+          <tr><td><code>del l</code></td><td>—</td><td>deletes the whole list variable</td></tr>
+          <tr><td><code>del l[i]</code> / <code>del l[i:j]</code></td><td>index / slice</td><td>deletes one item or a range</td></tr>
+          <tr><td><code>l.remove(x)</code></td><td><b>value</b>, not index</td><td>use when you know the value but not its position</td></tr>
+          <tr><td><code>l.pop()</code></td><td>index (optional)</td><td>no argument → removes the <b>last</b> item (stack-style)</td></tr>
+          <tr><td><code>l.clear()</code></td><td>—</td><td>empties the list, keeps it as <code>[]</code></td></tr>
+        </table>
+      </div>
+    </div>
+  </details>
+
+  <!-- 10 -->
+  <details class="section" id="s10" open>
+    <summary><span class="s-num">10</span><span class="s-title">Operations — merge, repeat, membership, loops</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="L1 = [1,2,3,4]
+L2 = [5,6,7,8]
+print(L1 + L2)     # Concatenation/Merge -> [1, 2, 3, 4, 5, 6, 7, 8]
+print(L1*3)        # -> [1,2,3,4, 1,2,3,4, 1,2,3,4]
+
+L1 = [1,2,3,4,5]
+L2 = [1,2,3,4,[5,6]]
+print(5 not in L1)     # -> False  (5 IS in L1)
+print([5,6] in L2)     # -> True   (the whole sub-list matches)
+
+L3 = [[[1,2],[3,4]],[[5,6],[7,8]]]
+for i in L3:
+    print(i)
+# [[1, 2], [3, 4]]
+# [[5, 6], [7, 8]]      <- only 2 iterations: 2 top-level items">Copy</button>
+        <pre class="code">L1 = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]
+L2 = [<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>]
+<span class="kw">print</span>(L1 + L2)     <span class="cm"># Concatenation/Merge -> [1, 2, 3, 4, 5, 6, 7, 8]</span>
+<span class="kw">print</span>(L1*<span class="num">3</span>)        <span class="cm"># -> [1,2,3,4, 1,2,3,4, 1,2,3,4]</span>
+
+L1 = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+L2 = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,[<span class="num">5</span>,<span class="num">6</span>]]
+<span class="kw">print</span>(<span class="num">5</span> <span class="kw">not in</span> L1)     <span class="cm"># -> False  (5 IS in L1)</span>
+<span class="kw">print</span>([<span class="num">5</span>,<span class="num">6</span>] <span class="kw">in</span> L2)     <span class="cm"># -> True   (the whole sub-list matches)</span>
+
+L3 = [[[<span class="num">1</span>,<span class="num">2</span>],[<span class="num">3</span>,<span class="num">4</span>]],[[<span class="num">5</span>,<span class="num">6</span>],[<span class="num">7</span>,<span class="num">8</span>]]]
+<span class="kw">for</span> i <span class="kw">in</span> L3:
+    <span class="kw">print</span>(i)
+<span class="cm"># [[1, 2], [3, 4]]</span>
+<span class="cm"># [[5, 6], [7, 8]]      <- only 2 iterations: 2 top-level items</span></pre>
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Gotcha — the -1 multiplication quirk</div>
+        Multiplying a list by a positive number repeats it (<code>L1*3</code> above). The instructor also tried <code>L1 * -1</code> live — it doesn't error, it just silently gives an <b>empty list</b>. Worth remembering so it doesn't surprise you.
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Gotcha — membership on nested lists</div>
+        <code>5 in [1,2,3,4,[5,6]]</code> would be <b>False</b> — Python doesn't "look inside" a nested sub-list for membership. But <code>[5,6] in [1,2,3,4,[5,6]]</code> is <b>True</b>, since that exact sub-list is itself a top-level item.
+      </div>
+      <p><b>Looping over a nested list:</b> the loop runs once per <i>top-level</i> item — a nested sub-list is handed to you whole, not unpacked. In the <code>L3</code> example above, the outer list has only 2 items (each a 2D list), so the loop runs exactly twice.</p>
+    </div>
+  </details>
+
+  <!-- 11 -->
+  <details class="section" id="s11" open>
+    <summary><span class="s-num">11</span><span class="s-title">Built-in Functions</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p><b>Universal</b> (also work on strings, tuples, sets, dicts): <code>len</code>, <code>min</code>, <code>max</code>, <code>sorted</code>. <b>List-specific</b>: <code>count</code>, <code>index</code>, <code>reverse</code>, <code>sort</code>, <code>copy</code>.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>Function</th><th>What it does</th><th>Changes original?</th></tr>
+          <tr><td><code>len(l)</code></td><td>number of items</td><td>—</td></tr>
+          <tr><td><code>min(l)</code> / <code>max(l)</code></td><td>smallest / largest — needs homogeneous, comparable data</td><td>—</td></tr>
+          <tr><td><code>sorted(l)</code></td><td>ascending order (use <code>reverse=True</code> for descending)</td><td>No — returns a new list</td></tr>
+          <tr><td><code>l.sort()</code></td><td>sorts in place</td><td><b>Yes — permanent</b></td></tr>
+          <tr><td><code>l.reverse()</code></td><td>reverses in place</td><td><b>Yes — permanent</b></td></tr>
+          <tr><td><code>l.count(x)</code></td><td>frequency of <code>x</code></td><td>—</td></tr>
+          <tr><td><code>l.index(x)</code></td><td>position of <b>first</b> occurrence of <code>x</code></td><td>—</td></tr>
+          <tr><td><code>l.copy()</code></td><td>shallow copy at a new address</td><td>—</td></tr>
+        </table>
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ Interview favorite — sort() vs sorted()</div>
+        <code>sorted(l)</code> is <b>temporary</b>: it builds and returns a new sorted list, leaving <code>l</code> untouched. <code>l.sort()</code> is <b>permanent</b>: it sorts <code>l</code> in place and returns <code>None</code>. Mixing these up is a very common fresher mistake.
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="L = [1,2,1,3,4,1,5]
+print(L.count(5))     # 1
+print(L.index(1))     # 0  <- position of the FIRST occurrence
+
+L = [2,1,5,7,0]
+L.reverse()            # permanent!
+print(L)               # [0, 7, 5, 1, 2]
+
+L = [2,1,5,7,0]
+print(L)               # [2, 1, 5, 7, 0]
+print(sorted(L))        # [0, 1, 2, 5, 7]   <- new list
+print(L)               # [2, 1, 5, 7, 0]   <- unchanged!
+L.sort()
+print(L)               # [0, 1, 2, 5, 7]   <- NOW permanently sorted
+
+L = [2,1,5,7,0]
+print(id(L))
+L1 = L.copy()          # same values, different memory address
+print(id(L1))">Copy</button>
+        <pre class="code">L = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">1</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">1</span>,<span class="num">5</span>]
+<span class="kw">print</span>(L.count(<span class="num">5</span>))     <span class="cm"># 1</span>
+<span class="kw">print</span>(L.index(<span class="num">1</span>))     <span class="cm"># 0  <- position of the FIRST occurrence</span>
+
+L = [<span class="num">2</span>,<span class="num">1</span>,<span class="num">5</span>,<span class="num">7</span>,<span class="num">0</span>]
+L.reverse()            <span class="cm"># permanent!</span>
+<span class="kw">print</span>(L)               <span class="cm"># [0, 7, 5, 1, 2]</span>
+
+L = [<span class="num">2</span>,<span class="num">1</span>,<span class="num">5</span>,<span class="num">7</span>,<span class="num">0</span>]
+<span class="kw">print</span>(L)               <span class="cm"># [2, 1, 5, 7, 0]</span>
+<span class="kw">print</span>(sorted(L))        <span class="cm"># [0, 1, 2, 5, 7]   <- new list</span>
+<span class="kw">print</span>(L)               <span class="cm"># [2, 1, 5, 7, 0]   <- unchanged!</span>
+L.sort()
+<span class="kw">print</span>(L)               <span class="cm"># [0, 1, 2, 5, 7]   <- NOW permanently sorted</span>
+
+L = [<span class="num">2</span>,<span class="num">1</span>,<span class="num">5</span>,<span class="num">7</span>,<span class="num">0</span>]
+<span class="kw">print</span>(id(L))
+L1 = L.copy()          <span class="cm"># same values, different memory address</span>
+<span class="kw">print</span>(id(L1))</pre>
+      </div>
+      <div class="out">140163201056<b>112</b>  <span style="opacity:.6">← id(L)</span><br/>140163201128<b>800</b>  <span style="opacity:.6">← id(L1) — different address, same values</span></div>
+    </div>
+  </details>
+
+  <!-- 12 -->
+  <details class="section" id="s12" open>
+    <summary><span class="s-num">12</span><span class="s-title">List Comprehension</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Flagged by the instructor as the thing you'll <b>use constantly</b> as a data scientist. Faster than loops (Python optimizes it internally), fewer lines, and turns loop+if logic into a one-line "formula".</p>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="[expression for item in iterable if condition]">Copy</button>
+        <pre class="code">[expression <span class="kw">for</span> item <span class="kw">in</span> iterable <span class="kw">if</span> condition]</pre>
+      </div>
+
+      <h4>1 → 10 without comprehension vs with</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# loop version (4 lines)
+l = []
+for i in range(1, 11):
+    l.append(i)
+
+# comprehension version (1 line)
+l = [i for i in range(1, 11)]">Copy</button>
+        <pre class="code"><span class="cm"># loop version (4 lines)</span>
+l = []
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>, <span class="num">11</span>):
+    l.append(i)
+
+<span class="cm"># comprehension version (1 line)</span>
+l = [i <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>, <span class="num">11</span>)]</pre>
+      </div>
+
+      <h4>More patterns worth memorizing</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# scalar multiplication on a vector
+v = [2,3,4]
+s = -3
+print([s*i for i in v])                              # [-6, -9, -12]
+
+# squares
+L = [1,2,3,4,5]
+print([i**2 for i in L])                             # [1, 4, 9, 16, 25]
+
+# numbers divisible by 5, from 1 to 50
+print([i for i in range(1,51) if i%5 == 0])
+# [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]
+
+# languages starting with 'p'
+languages = ['java','python','php','c','javascript']
+print([language for language in languages if language.startswith('p')])
+# ['python', 'php']
+
+# nested if -> fruit in basket AND starts with 'a'
+basket = ['apple','guava','cherry','banana']
+my_fruits = ['apple','kiwi','grapes','banana']
+print([fruit for fruit in my_fruits if fruit in basket if fruit.startswith('a')])
+# ['apple']
+
+# nested comprehension -> a (3,3) matrix
+print([[i*j for i in range(1,4)] for j in range(1,4)])
+# [[1, 2, 3], [2, 4, 6], [3, 6, 9]]
+
+# two 'for' clauses -> cartesian product
+L1 = [1,2,3,4]
+L2 = [5,6,7,8]
+print([i*j for i in L1 for j in L2])
+# [5,6,7,8, 10,12,14,16, 15,18,21,24, 20,24,28,32]">Copy</button>
+        <pre class="code"><span class="cm"># scalar multiplication on a vector</span>
+v = [<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]
+s = <span class="num">-3</span>
+<span class="kw">print</span>([s*i <span class="kw">for</span> i <span class="kw">in</span> v])                              <span class="cm"># [-6, -9, -12]</span>
+
+<span class="cm"># squares</span>
+L = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]
+<span class="kw">print</span>([i**<span class="num">2</span> <span class="kw">for</span> i <span class="kw">in</span> L])                             <span class="cm"># [1, 4, 9, 16, 25]</span>
+
+<span class="cm"># numbers divisible by 5, from 1 to 50</span>
+<span class="kw">print</span>([i <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>,<span class="num">51</span>) <span class="kw">if</span> i%<span class="num">5</span> == <span class="num">0</span>])
+<span class="cm"># [5, 10, 15, 20, 25, 30, 35, 40, 45, 50]</span>
+
+<span class="cm"># languages starting with 'p'</span>
+languages = [<span class="str">'java'</span>,<span class="str">'python'</span>,<span class="str">'php'</span>,<span class="str">'c'</span>,<span class="str">'javascript'</span>]
+<span class="kw">print</span>([language <span class="kw">for</span> language <span class="kw">in</span> languages <span class="kw">if</span> language.startswith(<span class="str">'p'</span>)])
+<span class="cm"># ['python', 'php']</span>
+
+<span class="cm"># nested if -> fruit in basket AND starts with 'a'</span>
+basket = [<span class="str">'apple'</span>,<span class="str">'guava'</span>,<span class="str">'cherry'</span>,<span class="str">'banana'</span>]
+my_fruits = [<span class="str">'apple'</span>,<span class="str">'kiwi'</span>,<span class="str">'grapes'</span>,<span class="str">'banana'</span>]
+<span class="kw">print</span>([fruit <span class="kw">for</span> fruit <span class="kw">in</span> my_fruits <span class="kw">if</span> fruit <span class="kw">in</span> basket <span class="kw">if</span> fruit.startswith(<span class="str">'a'</span>)])
+<span class="cm"># ['apple']</span>
+
+<span class="cm"># nested comprehension -> a (3,3) matrix</span>
+<span class="kw">print</span>([[i*j <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">1</span>,<span class="num">4</span>)] <span class="kw">for</span> j <span class="kw">in</span> range(<span class="num">1</span>,<span class="num">4</span>)])
+<span class="cm"># [[1, 2, 3], [2, 4, 6], [3, 6, 9]]</span>
+
+<span class="cm"># two 'for' clauses -> cartesian product</span>
+L1 = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]
+L2 = [<span class="num">5</span>,<span class="num">6</span>,<span class="num">7</span>,<span class="num">8</span>]
+<span class="kw">print</span>([i*j <span class="kw">for</span> i <span class="kw">in</span> L1 <span class="kw">for</span> j <span class="kw">in</span> L2])
+<span class="cm"># [5,6,7,8, 10,12,14,16, 15,18,21,24, 20,24,28,32]</span></pre>
+      </div>
+      <div class="callout remember">
+        <div class="cal-head">★ Remember — reading nested comprehension</div>
+        In <code>[[i*j for i in range(1,4)] for j in range(1,4)]</code>, the <b>outer variable (<code>j</code>) is decided first</b> — Python fixes <code>j=1</code>, then runs the whole inner loop over <code>i</code> to build one row, then moves to <code>j=2</code>, and so on. You're moving from outside to inside. Stuck? Trace it in a visualizer like <b>Python Tutor</b>.
+      </div>
+    </div>
+  </details>
+
+  <!-- 13 -->
+  <details class="section" id="s13" open>
+    <summary><span class="s-num">13</span><span class="s-title">Two Ways to Traverse a List</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# 1. item-wise (the Pythonic way)
+for i in l:
+    print(i)          # i IS the value: 1, 2, 3, 4 ...
+
+# 2. index-wise (familiar from Java/C)
+for i in range(0, len(l)):
+    print(i)           # i is just the position: 0, 1, 2, 3 ...
+    print(l[i])         # use l[i] to get the actual value">Copy</button>
+        <pre class="code"><span class="cm"># 1. item-wise (the Pythonic way)</span>
+<span class="kw">for</span> i <span class="kw">in</span> l:
+    <span class="kw">print</span>(i)          <span class="cm"># i IS the value: 1, 2, 3, 4 ...</span>
+
+<span class="cm"># 2. index-wise (familiar from Java/C)</span>
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">0</span>, len(l)):
+    <span class="kw">print</span>(i)           <span class="cm"># i is just the position: 0, 1, 2, 3 ...</span>
+    <span class="kw">print</span>(l[i])         <span class="cm"># use l[i] to get the actual value</span></pre>
+      </div>
+      <p>Use index-wise when you specifically need the <i>position</i> — e.g. comparing an item to its neighbours.</p>
+    </div>
+  </details>
+
+  <!-- 14 -->
+  <details class="section" id="s14" open>
+    <summary><span class="s-num">14</span><span class="s-title">The zip() Function</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>Pairs up items <b>position-wise</b> from two (or more) lists into tuples. If lengths differ, the shorter list decides how many pairs you get.</p>
+      <h4>Motivating problem: add two lists element-wise</h4>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# Add items of 2 lists indexwise
+L1 = [1,2,3,4]
+L2 = [-1,-2,-3,-4]
+
+print(list(zip(L1,L2)))              # [(1,-1), (2,-2), (3,-3), (4,-4)]
+
+print([i+j for i,j in zip(L1,L2)])   # [0, 0, 0, 0]
+# NOTE: L1 + L2 does NOT do this — that just concatenates the lists">Copy</button>
+        <pre class="code"><span class="cm"># Add items of 2 lists indexwise</span>
+L1 = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>]
+L2 = [<span class="num">-1</span>,<span class="num">-2</span>,<span class="num">-3</span>,<span class="num">-4</span>]
+
+<span class="kw">print</span>(<span class="kw">list</span>(zip(L1,L2)))              <span class="cm"># [(1,-1), (2,-2), (3,-3), (4,-4)]</span>
+
+<span class="kw">print</span>([i+j <span class="kw">for</span> i,j <span class="kw">in</span> zip(L1,L2)])   <span class="cm"># [0, 0, 0, 0]</span>
+<span class="cm"># NOTE: L1 + L2 does NOT do this — that just concatenates the lists</span></pre>
+      </div>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ Gotcha</div>
+        <code>l1 + l2</code> is concatenation (<code>[1,2,3,4,5,6,7,8]</code>), not element-wise addition. For item-by-item math across two lists, you need <code>zip</code>.
+      </div>
+    </div>
+  </details>
+
+  <!-- 15 -->
+  <details class="section" id="s15" open>
+    <summary><span class="s-num">15</span><span class="s-title">Disadvantages &amp; the Aliasing Gotcha</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <ol>
+        <li><b>Slower</b> than arrays for the same task.</li>
+        <li><b>Uses more memory</b> than arrays (referential storage + doubling waste).</li>
+        <li><b>Risky to use carelessly</b> — because lists are mutable, sharing a reference can silently corrupt data.</li>
+      </ol>
+      <div class="callout gotcha">
+        <div class="cal-head">⚠ The #1 beginner/intern bug — accidental aliasing</div>
+        <code>b = a</code> does <b>not</b> copy the list — it makes <code>b</code> point to the <b>same</b> list object as <code>a</code>. Changing <code>a</code> silently changes <code>b</code> too, because there's really only one list underneath.
+      </div>
+      <div class="code-wrap">
+        <button class="copy-btn" data-copy="# THE BUG — plain assignment shares the same list object
+a = [1, 2, 3]
+b = a              # b is NOT a copy — same object!
+a.append(4)
+print(a)           # [1, 2, 3, 4]
+print(b)           # [1, 2, 3, 4]  <- b changed too, even though untouched
+
+# THE FIX — from the class notebook
+a = [1,2,3]
+b = a.copy()       # breaks the shared reference
+
+print(a)           # [1, 2, 3]
+print(b)           # [1, 2, 3]
+
+a.append(4)
+print(a)           # [1, 2, 3, 4]
+print(b)           # [1, 2, 3]     <- unaffected this time!">Copy</button>
+        <pre class="code"><span class="cm"># THE BUG — plain assignment shares the same list object</span>
+a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+b = a              <span class="cm"># b is NOT a copy — same object!</span>
+a.append(<span class="num">4</span>)
+<span class="kw">print</span>(a)           <span class="cm"># [1, 2, 3, 4]</span>
+<span class="kw">print</span>(b)           <span class="cm"># [1, 2, 3, 4]  <- b changed too, even though untouched</span>
+
+<span class="cm"># THE FIX — from the class notebook</span>
+a = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>]
+b = a.copy()       <span class="cm"># breaks the shared reference</span>
+
+<span class="kw">print</span>(a)           <span class="cm"># [1, 2, 3]</span>
+<span class="kw">print</span>(b)           <span class="cm"># [1, 2, 3]</span>
+
+a.append(<span class="num">4</span>)
+<span class="kw">print</span>(a)           <span class="cm"># [1, 2, 3, 4]</span>
+<span class="kw">print</span>(b)           <span class="cm"># [1, 2, 3]     <- unaffected this time!</span></pre>
+      </div>
+      <p>Deep copy vs shallow copy goes further than this and is covered separately — worth revisiting once you hit nested mutable structures.</p>
+    </div>
+  </details>
+
+  <!-- 15.5 Practice problems straight from the class notebook -->
+  <details class="section" id="s15b" open>
+    <summary><span class="s-num">◆</span><span class="s-title">Unsolved: Practice Problems from Class</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <p>These are the exact problems left at the end of the session notebook — <b>not solved in class</b>. Try each yourself before checking any solution; this is exactly the "write it from scratch" practice you wanted.</p>
+      <div class="tbl-wrap">
+        <table>
+          <tr><th>#</th><th>Problem</th><th>Given</th></tr>
+          <tr><td>1</td><td>Split a list into two: one with all odd numbers, one with all even numbers.</td><td><code>L = [1,2,3,4,5,6]</code></td></tr>
+          <tr><td>2</td><td>Take a list as input from the user (figure out how <code>input()</code> + a loop/comprehension can build a list).</td><td>—</td></tr>
+          <tr><td>3</td><td>Merge two lists <b>without</b> using the <code>+</code> operator.</td><td><code>L1 = [1,2,3,4]</code>, <code>L2 = [5,6,7,8]</code></td></tr>
+          <tr><td>4</td><td>Replace an item with a different item if it's found in the list (replace <code>3</code> with <code>300</code>).</td><td><code>L = [1,2,3,4,5,3]</code></td></tr>
+          <tr><td>5</td><td>Convert a 2D list into a 1D (flat) list.</td><td>any 2D list</td></tr>
+          <tr><td>6</td><td>Remove duplicate items from a list.</td><td><code>L = [1,2,1,2,3,4,5,3,4]</code></td></tr>
+          <tr><td>7</td><td>Check whether a list is in ascending order or not.</td><td>any list</td></tr>
+        </table>
+      </div>
+      <div class="callout interview">
+        <div class="cal-head">◆ How to use this</div>
+        Try each one cold first (no notes). If you freeze, write the input, the expected output, and the steps in plain English before touching code — that alone unblocks most "blank page" moments. Send me your attempts and I'll turn these into a proper practice set with hints, plus a separate answer key with explanations.
+      </div>
+    </div>
+  </details>
+
+  <!-- 16 Cheat sheet -->
+  <details class="section" id="s16" open>
+    <summary><span class="s-num">★</span><span class="s-title">60-Second Cheat Sheet</span><span class="chev">▸</span></summary>
+    <div class="s-body">
+      <div class="cheat-grid">
+        <div class="cheat-card"><h5>Definition</h5><p>Dynamic, heterogeneous, ordered collection — <code>[item, item, ...]</code></p></div>
+        <div class="cheat-card"><h5>vs Array</h5><p>Dynamic size + heterogeneous, but slower + more memory</p></div>
+        <div class="cheat-card"><h5>Why dynamic</h5><p>Fills up → new array double the size → copy → repeat</p></div>
+        <div class="cheat-card"><h5>Why heterogeneous</h5><p>Referential array: stores addresses, not values</p></div>
+        <div class="cheat-card"><h5>Add</h5><p><code>append</code> one · <code>extend</code> many · <code>insert</code> at position</p></div>
+        <div class="cheat-card"><h5>Delete</h5><p><code>del</code> · <code>remove(value)</code> · <code>pop(index)</code> · <code>clear()</code></p></div>
+        <div class="cheat-card"><h5>Permanent ops</h5><p><code>sort()</code>, <code>reverse()</code> mutate in place</p></div>
+        <div class="cheat-card"><h5>Temporary ops</h5><p><code>sorted()</code> returns a new list</p></div>
+        <div class="cheat-card"><h5>Comprehension</h5><p><code>[expr for item in it if cond]</code></p></div>
+        <div class="cheat-card"><h5>zip</h5><p>Pairs items position-wise across lists</p></div>
+        <div class="cheat-card"><h5>Aliasing trap</h5><p><code>b = a</code> shares memory — use <code>a.copy()</code></p></div>
+        <div class="cheat-card"><h5>Reverse trick</h5><p><code>l[::-1]</code> — same as strings</p></div>
+      </div>
+    </div>
+  </details>
+
+  <footer>Built from the CampusX live-class transcript on Python Lists · keep this open while you revise</footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var text = btn.getAttribute('data-copy') || '';
+      var done = function(){
+        var old = btn.textContent;
+        btn.textContent = 'Copied';
+        setTimeout(function(){ btn.textContent = old; }, 1200);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){
+          fallbackCopy(text); done();
+        });
+      } else {
+        fallbackCopy(text); done();
+      }
+    });
+  });
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try { document.execCommand('copy'); } catch(e){}
+    document.body.removeChild(ta);
+  }
+</script>
